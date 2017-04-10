@@ -3,6 +3,7 @@ import os
 import _pickle
 
 from scripts.convert import *
+from corpora import *
 
 if __name__ == "__main__":
     args = sys.argv[1:]
@@ -10,6 +11,12 @@ if __name__ == "__main__":
         sys.exit(1)
     else:
         if args[0] == "wiki":
-            WikiConverter().convert()
+            WikiConverter(WIKI_OLD, WIKI_RAW, WIKI_NEW).convert()
         elif args[0] == "factbank":
-            FactbankConverter().convert()
+            FactbankConverter(FACTBANK_OLD, FACTBANK_RAW, FACTBANK_NEW).convert()
+        elif args[0] == "biobmc":
+            BioBmcConverter(BIO_BMC_OLD, BIO_BMC_RAW, BIO_BMC_NEW).convert()
+        elif args[0] == "biofly":
+            BioFlyConverter(BIO_FLY_OLD, BIO_FLY_RAW, BIO_FLY_NEW).convert()
+        elif args[0] == "biohbc":
+            BioHbcConverter(BIO_HBC_OLD, BIO_HBC_RAW, BIO_HBC_NEW).convert()

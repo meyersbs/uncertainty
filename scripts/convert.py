@@ -4,20 +4,21 @@ import subprocess
 from xml2json import xml2json
 from collections import defaultdict
 
-from corpora import *
-
 
 class Converter(object):
-    def __init__(self):
+    def __init__(self, old, raw, new):
         self.JSON_DICT = {}
         self.ALL_SENTS = []
+        self.OLD = old
+        self.RAW = raw
+        self.NEW = new
 
-    def _xmlToJson(self, xml_filename, json_filename):
-        bash = str("xml2json -t xml2json -o " + json_filename + " " + xml_filename)
+    def _xmlToJson(self):
+        bash = str("xml2json -t xml2json -o " + self.RAW + " " + self.OLD)
         process = subprocess.call(bash.split())
 
-    def _load_raw(self, json_filename):
-        with open(json_filename, 'r') as f:
+    def _load_raw(self):
+        with open(self.RAW, 'r') as f:
             self.JSON_DICT = json.loads(f.read())
 
     def _parse_sent(self, sent):
@@ -26,16 +27,18 @@ class Converter(object):
     def _convert(self):
         raise NotImplementedError
 
-    def _write_to_file(self, json_filename):
-        with open(json_filename, 'w') as f:
+    def _write_to_file(self):
+        with open(self.NEW, 'w') as f:
             f.write(json.dumps(self.ALL_SENTS))
 
     def convert(self):
-        raise NotImplementedError
+        self._xmlToJson()
+        self._load_raw()
+        self._convert()
+        self._write_to_file()
 
 
 class WikiConverter(Converter):
-    from corpora import WIKI_OLD, WIKI_RAW, WIKI_NEW
 
     def _parse_sent(self, sent):
         results = {'text': "", 'ccue': {}}
@@ -67,16 +70,8 @@ class WikiConverter(Converter):
                     if '#text' in doc['Sentence'].keys():
                         self.ALL_SENTS.append({'text': doc['Sentence']['#text'], 'ccue': {}})
 
-    def convert(self):
-        global WIKI_OLD, WIKI_RAW, WIKI_NEW
-        self._xmlToJson(WIKI_OLD, WIKI_RAW)
-        self._load_raw(WIKI_RAW)
-        self._convert()
-        self._write_to_file(WIKI_NEW)
-
 
 class FactbankConverter(Converter):
-    from corpora import FACTBANK_OLD, FACTBANK_RAW, FACTBANK_NEW
 
     def _parse_sent(self, sent, prefix):
         results = {'text': "", 'ccue': {}}
@@ -124,9 +119,11 @@ class FactbankConverter(Converter):
             else:
                 print(type(document['DocumentPart']))
 
-    def convert(self):
-        global FACTBANK_OLD, FACTBANK_RAW, FACTBANK_NEW
-        self._xmlToJson(FACTBANK_OLD, FACTBANK_RAW)
-        self._load_raw(FACTBANK_RAW)
-        self._convert()
-        self._write_to_file(FACTBANK_NEW)
+
+class BioBmcConverter(WikiConverter):{}
+
+
+class BioFlyConverter(WikiConverter):{}
+
+
+class BioHbcConverter(FactbankConverter):{}
