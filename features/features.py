@@ -165,53 +165,67 @@ def get_semantic_features(document, lexical_features):
     Given a dictionary of lexical features obtained by get_lexical_features(),
     translate those features to semantic features.
     """
-    features = {}
+    features = {
+            'is_speculation': 0, 'is_negation': 0, 'is_modal': 0, 'is_hypo': 0,
+            'is_epistemic': 0, 'is_doxastic': 0, 'is_investigation': 0,
+            'is_condition': 0, 'has_hedges': 0, 'has_weasels': 0,
+            'has_peacocks': 0
+        }
+    '''
+    for i in range(len(UNI_HEDGES)):
+        features['has_hedge_' + UNI_HEDGES[i].replace(" ", "_")] = 0
+
+    for i in range(len(BI_HEDGES)):
+        features['has_hedge_' + BI_HEDGES[i].replace(" ", "_")] = 0
+
+    for i in range(len(TRI_HEDGES)):
+        features['has_hedge_' + TRI_HEDGES[i].replace(" ", "_")] = 0
+    '''
     stemmer = PorterStemmer()
 
     for entry in ['unigram', 'bigram', 'trigram']:
         for k, v in lexical_features[str(entry) + 's'].items():
             if k == 'hedges' and len(v) > 0:
-                for item in v:
-                    features['has_hedge_' + item.replace(" ", "_")] = 1
+                features['has_hedges'] = 1
+#                for item in v:
+#                    features['has_hedge_' + item.replace(" ", "_")] = 1
             if k == 'weasels' and len(v) > 0:
-                for item in v:
-                    features['has_weasel_' + item.replace(" ", "_")] = 1
+                features['has_weasels'] = 1
+#                for item in v:
+#                    features['has_weasel_' + item.replace(" ", "_")] = 1
             if k == 'peacocks' and len(v) > 0:
-                for item in v:
-                    features['has_peacock_' + item.replace(" ", "_")] = 1
-            if k == 'raw' and len(v) > 0:
-                for item in v:
-                    features['has_' + entry + '_' + item.replace(" ", "_")] = 1
-                    if entry == 'unigram':
-                        features['has_stem_' + stemmer.stem(item)] = 1
 
-    for key in lexical_features['pos'].keys():
-        features['has_pos_' + key] = 1
+                features['has_peacocks'] = 1
+#                for item in v:
+#                    features['has_peacock_' + item.replace(" ", "_")] = 1
+#            if k == 'raw' and len(v) > 0:
+#                for item in v:
+#                    features['has_' + entry + '_' + item.replace(" ", "_")] = 1
+#                    if entry == 'unigram':
+#                        features['has_stem_' + stemmer.stem(item)] = 1
 
-    features['is_speculation'] = 0
-    features['is_negation'] = 0
-
-    features['is_modal'] = 0
-    features['is_hypo'] = 0
-
-    features['is_epistemic'] = 0
-    features['is_doxastic'] = 0
-    features['is_investigation'] = 0
-    features['is_condition'] = 0
+#    for key in lexical_features['pos'].keys():
+#        features['has_pos_' + key] = 1
 
     for k, v in document['ccue'].items():
         if k is not None:
+            #print(k)
             if re.search(r'speculation', k) is not None:
-                features['is_speculation'] = 1
-            elif re.search(r'negation', k) is not None:
-                features['is_negation'] = 1
+                features['is_speculation'] += 1
+            if re.search(r'negation', k) is not None:
+                features['is_negation'] += 1
             if re.search(r'modal', k) is not None:
-                features['is_modal'] = 1
-            elif re.search(r'hypo', k) is not None:
-                features['is_hypo'] = 1
-
-            print("=====")
-            print(k)
+                features['is_modal'] += 1
+            if re.search(r'hypo', k) is not None:
+                features['is_hypo'] += 1
+            if re.search(r'probable', k) is not None:
+                features['is_epistemic'] += 1
+            if re.search(r'doxastic', k) is not None:
+                features['is_doxastic'] += 1
+            if re.search(r'investigation', k) is not None:
+                features['is_investigation'] += 1
+            if re.search(r'condition', k) is not None:
+                features['is_condition'] += 1
 
     return features
 
@@ -227,7 +241,6 @@ def preprocess(sent):
     clean_sent = clean_sent.replace('&', 'and')
     clean_sent = clean_sent.replace('_', '-')
 
-    #print(clean_sent)
     return clean_sent
 
 def features(documents):
@@ -242,10 +255,3 @@ def features(documents):
 #        print(temp_dict)
 
     return feature_dict
-
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    if len(args) != 1:
-        sys.exit(1)
-    else:
-        print(get_features(args[0]))
