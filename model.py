@@ -3,6 +3,7 @@ import os
 import _pickle
 
 from scripts.convert import *
+from features.features import *
 from corpora import *
 
 if __name__ == "__main__":
@@ -20,3 +21,7 @@ if __name__ == "__main__":
             BioFlyConverter(BIO_FLY_OLD, BIO_FLY_RAW, BIO_FLY_NEW).convert()
         elif args[0] == "biohbc":
             BioHbcConverter(BIO_HBC_OLD, BIO_HBC_RAW, BIO_HBC_NEW).convert()
+        elif args[0] == "features":
+            with open(WIKI_NEW, 'r') as f:
+                sents = json.loads(f.read())
+                print(features(sents))
