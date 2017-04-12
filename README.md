@@ -21,7 +21,7 @@ Use the following commands to install dependencies:
 ``` bash
     git clone https://github.com/meyersbs/uncertainty.git
     cd uncertainty/
-    pip -r requirements.txt
+    pip install -r requirements.txt
 ```
 
 ### Usage
