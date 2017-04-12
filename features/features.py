@@ -130,6 +130,7 @@ def get_lexical_features(document):
     return a dictionary of features related to unigrams, bigrams, trigrams,
     hedges, weasels, peacocks, and parts-of-speech.
     """
+    # TODO: Cleanup this nonsense.
     features = {'unigrams': {}, 'bigrams': {}, 'trigrams': {}}
 
     # Get unigrams, bigrams, and trigrams
@@ -165,48 +166,71 @@ def get_semantic_features(document, lexical_features):
     Given a dictionary of lexical features obtained by get_lexical_features(),
     translate those features to semantic features.
     """
+    # The features listed below should not be used, as they indirectly define
+    #    whether or not a sentence is uncertain. Using them results in 100%
+    #    precision, recall, and f1-score.
+    #
+    #    1) 'is_speculation' 	2) 'is_negation'	3) 'is_modal'
+    #    4) 'is_hypo'		5) 'is_epistemic'	6) 'is_doxastic'
+    #    7) 'is_investigation'	8) 'is_condition'
     features = {
-            'is_speculation': 0, 'is_negation': 0, 'is_modal': 0, 'is_hypo': 0,
-            'is_epistemic': 0, 'is_doxastic': 0, 'is_investigation': 0,
-            'is_condition': 0, 'has_hedges': 0, 'has_weasels': 0,
-            'has_peacocks': 0
+            'has_hedges': 0, 'has_weasels': 0, 'has_peacocks': 0,
+            'word_count': len(document['text'].split())#,
+            #'unigrams': len(lexical_features['unigrams']['raw']),
+            #'bigrams': len(lexical_features['bigrams']['raw']),
+            #'trigrams': len(lexical_features['trigrams']['raw'])
         }
-    '''
-    for i in range(len(UNI_HEDGES)):
-        features['has_hedge_' + UNI_HEDGES[i].replace(" ", "_")] = 0
-
-    for i in range(len(BI_HEDGES)):
-        features['has_hedge_' + BI_HEDGES[i].replace(" ", "_")] = 0
-
-    for i in range(len(TRI_HEDGES)):
-        features['has_hedge_' + TRI_HEDGES[i].replace(" ", "_")] = 0
-    '''
     stemmer = PorterStemmer()
 
     for entry in ['unigram', 'bigram', 'trigram']:
         for k, v in lexical_features[str(entry) + 's'].items():
             if k == 'hedges' and len(v) > 0:
                 features['has_hedges'] = 1
-#                for item in v:
-#                    features['has_hedge_' + item.replace(" ", "_")] = 1
+                # Individual hedges could be used as features, but we need to
+                #    include all of the available hedges as keys in the
+                #    feature dictionary for every sentence.
+                #for item in v:
+                #    features['has_hedge_' + item.replace(" ", "_")] = 1
             if k == 'weasels' and len(v) > 0:
                 features['has_weasels'] = 1
-#                for item in v:
-#                    features['has_weasel_' + item.replace(" ", "_")] = 1
+                # Individual weasels could be used as features, but we need to
+                #    include all of the available weasels as keys in the
+                #    feature dictionary for every sentence.
+                #for item in v:
+                #    features['has_weasel_' + item.replace(" ", "_")] = 1
             if k == 'peacocks' and len(v) > 0:
-
                 features['has_peacocks'] = 1
-#                for item in v:
-#                    features['has_peacock_' + item.replace(" ", "_")] = 1
-#            if k == 'raw' and len(v) > 0:
-#                for item in v:
-#                    features['has_' + entry + '_' + item.replace(" ", "_")] = 1
-#                    if entry == 'unigram':
-#                        features['has_stem_' + stemmer.stem(item)] = 1
+                # Individual peacocks could be used as features, but we need to
+                #    include all of the available peacocks as keys in the
+                #    feature dictionary for every sentence.
+                #for item in v:
+                #    features['has_peacock_' + item.replace(" ", "_")] = 1
 
-#    for key in lexical_features['pos'].keys():
-#        features['has_pos_' + key] = 1
+            # Potentially, we could include every unique unigram, bigram, and
+            #    trigram as features, but then we would need to write an
+            #    external function to ensure that all feature dicts contain an
+            #    entry for every unique ngram in the document set -- this would
+            #    be incredibly verbose and likely of little value.
+            #if k == 'raw' and len(v) > 0:
+            #    for item in v:
+            #        features['has_' + entry + '_' + item.replace(" ", "_")] = 1
+                    # Uncomment to unclude unique stems as features. This would
+                    #    also require an external function to propogate all of
+                    #    the stems in the document set.
+                    #if entry == 'unigram':
+                    #    features['has_stem_' + stemmer.stem(item)] = 1
 
+    # Additionally, we could include all of the parts of speech throughout the
+    #    document set as features, but we would either need to write an
+    #    external propogation function, or include every possible POS tag as a
+    #    feature.
+    #for key in lexical_features['pos'].keys():
+    #    features['has_pos_' + key] = 1
+
+    # Uncomment this to include the semantic uncertainty labels as features. As
+    #    previously described, this results in a classifier with 100% precision,
+    #    recall, and f1-score.
+    '''
     for k, v in document['ccue'].items():
         if k is not None:
             #print(k)
@@ -226,32 +250,27 @@ def get_semantic_features(document, lexical_features):
                 features['is_investigation'] += 1
             if re.search(r'condition', k) is not None:
                 features['is_condition'] += 1
-
+    '''
     return features
 
 def get_features(document):
+    """
+    Return a dictionary of features that can be converted to vectors for
+    classification purposes.
+    """
     lexical_features = get_lexical_features(document)
     semantic_features = get_semantic_features(document, lexical_features)
 
     return semantic_features
 
 def preprocess(sent):
+    """
+    Clean up each sentence by 1) removing punctuation, 2) replacing ampersands
+    with 'and', and 3) replacing underscores with hyphens.
+    """
     global REGEX
     clean_sent = REGEX.sub('', sent.lower())
     clean_sent = clean_sent.replace('&', 'and')
     clean_sent = clean_sent.replace('_', '-')
 
     return clean_sent
-
-def features(documents):
-    feature_dict = {}
-
-    for sent in documents:
-        temp_dict = {}
-        temp_dict['sent'] = sent['text']
-        temp_dict.update(get_features(sent))
-        feature_dict[len(feature_dict)] = temp_dict
-#        print("=====")
-#        print(temp_dict)
-
-    return feature_dict

@@ -9,8 +9,6 @@ from sklearn import svm
 from scipy.sparse import csr_matrix
 from sklearn.metrics import classification_report, confusion_matrix
 
-from corpora import WIKI_NEW, FACTBANK_NEW, BIO_BMC_NEW, \
-                    BIO_FLY_NEW, BIO_HBC_NEW
 from features import *
 from features.features import *
 
@@ -18,14 +16,19 @@ def train_svm(documents, ntesting=500):
 
     random.shuffle(documents)
     testing = documents[-ntesting:]
-    documents = documents[:-ntesting]
+    training = documents[:-ntesting]
 
-    x, y = docs_to_feature_vectors(documents)
+    print("Generating feature vectors for the training data...")
+    x, y = docs_to_feature_vectors(training)
+    print("Generating feature vectors for the testing data...")
     xtest, ytest = docs_to_feature_vectors(testing)
 
+    print("Training the classifier...")
     classifier = svm.SVC(C=0.02, kernel='linear', probability=True)
+    print("Fitting the classifier...")
     classifier.fit(x, y)
 
+    print("Running against testing data...")
     y_prediction = classifier.predict(xtest)
 #    print(xtest)
 #    print(ytest)
@@ -48,9 +51,9 @@ def docs_to_feature_vectors(documents):
 
         feature_vector = [feature_set[feature] for feature in feature_keys]
 
-        doc_class = 0
+        doc_class = 0 # label: not_uncertain
         if len(doc['ccue']) > 0:
-            doc_class = 1
+            doc_class = 1 # label: uncertain
 
 #        print(doc_class)
         x.append(feature_vector)

@@ -1,4 +1,6 @@
 scikit-learn
-sklearn-crfsuite
 numpy
 scipy
+SPLAT-library
+nltk
+xml2json
