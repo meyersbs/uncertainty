@@ -12,7 +12,9 @@ from scripts.train import *
 from features.features import *
 from corpora import *
 
-MODEL_FILENAME = os.path.join(os.path.split(__file__)[0], 'uncertainty-svm.p')
+MODEL_FILENAME = os.path.join(
+        os.path.split(__file__)[0], 'uncertainty-model.p'
+    )
 
 CLASSIFIER = _pickle.load(open(MODEL_FILENAME, 'rb'))
 
@@ -63,7 +65,7 @@ if __name__ == "__main__":
             print(len(all_docs))
 
             print("Starting to train model...")
-            FITTED_SVC = train_svm(all_docs, ntesting=int(args[1]))
+            FITTED_SVC = train(all_docs, test_size=float(args[1]))
 
             print("Dumping model to disk...")
             _pickle.dump(FITTED_SVC, open("uncertainty-svm.p", "wb"))

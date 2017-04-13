@@ -5,36 +5,45 @@ import os
 import random
 import sys
 
-from sklearn import svm
+from sklearn import linear_model
+from sklearn.model_selection import train_test_split
 from scipy.sparse import csr_matrix
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import (
+        classification_report, confusion_matrix,
+        precision_recall_fscore_support
+    )
 
 from features import *
 from features.features import *
 
-def train_svm(documents, ntesting=500):
 
-    random.shuffle(documents)
-    testing = documents[-ntesting:]
-    training = documents[:-ntesting]
+def train(documents, test_size=0.25):
+    X, y = docs_to_feature_vectors(documents)
+    X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size
+        )
 
-    print("Generating feature vectors for the training data...")
-    x, y = docs_to_feature_vectors(training)
-    print("Generating feature vectors for the testing data...")
-    xtest, ytest = docs_to_feature_vectors(testing)
+    classifier = linear_model.LogisticRegression(
+            class_weight="balanced", n_jobs=-1
+        )
+    classifier.fit(X_train, y_train)
+    y_pred = classifier.predict(X_test)
 
-    print("Training the classifier...")
-    classifier = svm.SVC(C=0.02, kernel='linear', probability=True)
-    print("Fitting the classifier...")
-    classifier.fit(x, y)
-
-    print("Running against testing data...")
-    y_prediction = classifier.predict(xtest)
-#    print(xtest)
-#    print(ytest)
-    print(classification_report(ytest, y_prediction))
+    print("Performance")
+    print("-----------")
+    (precision, recall, fscore, support) = precision_recall_fscore_support(
+            y_test, y_pred, average='binary', pos_label=1
+        )
+    print("Precision  {:3.2%}".format(precision))
+    print("Recall     {:3.2%}".format(recall))
+    print("F-score    {:3.2%}".format(fscore))
     print("\n")
-    print(confusion_matrix(ytest, y_prediction))
+    print("Classification Report")
+    print("---------------------")
+    print("{}".format(classification_report(y_test, y_pred)))
+    print("Confusion Matrix")
+    print("----------------")
+    print("{}".format(confusion_matrix(y_test, y_pred)))
 
     return classifier
 
@@ -48,18 +57,17 @@ def docs_to_feature_vectors(documents):
         feature_set = get_features(doc)
         if not feature_keys:
             feature_keys = sorted(feature_set.keys())
-
         feature_vector = [feature_set[feature] for feature in feature_keys]
 
-        doc_class = 0 # label: not_uncertain
+        doc_class = 0  # label: not_uncertain
         if len(doc['ccue']) > 0:
-            doc_class = 1 # label: uncertain
+            doc_class = 1  # label: uncertain
 
 #        print(doc_class)
         x.append(feature_vector)
         y.append(doc_class)
+        cnt += 1
         print(cnt)
-        cnt+=1
 
     x = csr_matrix(np.asarray(x))
     y = np.asarray(y)
