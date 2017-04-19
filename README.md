@@ -111,6 +111,15 @@ The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were
 * <b>Current Stem/Lemma w/ Neighboring POS:<sup><b>[`[B]`](#n2)</b></sup> </b>
 
 ---
+### Classification
+
+Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> used a Maximum Entropy classification algorithm; we used the equivalent Logistic Regression from scikit-learn. As described in the paper (and reiterated above), the features are token-based, not sentence-based; the classifier attempts to classify tokens, and can then be applied to classify sentences as certain or uncertain by using the following heuristic: if a at least one token in the sentence is classified as uncertain, then the sentence may be regarded as uncertain.
+
+In building the classifier, the independent variable is the human-annotated label of each token. The labels currently used are ``O - Ordinary`` used to denote a *certain* token and various ``B-*`` or ``I-*`` used to denote subcategories of *uncertain* tokens. Clearly, the task of predicting the label of a token is a multi-class classification problem. However, by treating the label ``O`` as certain (``c``) and every other label as uncertain (``u``), the multi-class classification problem may be transformed into a binary classification problem.
+
+As described in the paper (and reiterated above), the features are token-based, not sentence-based; the classifier attempts to classify tokens, and can then be applied to classify sentences as certain or uncertain by using the following heuristic: if a at least one token in the sentence is classified as uncertain, then the sentence may be regarded as uncertain.
+
+---
 ### Contact
 If you have questions regarding this API, please contact [bsm9339@rit.edu](mailto:bsm9339@rit.edu) (Benjamin Meyers) or [nm6061@rit.edu](mailto:nm6061@rit.edu) (Nuthan Munaiah).
 
