@@ -2,6 +2,7 @@
 
 Pronounced: &#91;&#x2C8;lusi&#93;
 
+---
 ### Description
 
 A Python implementation of a classifier for linguistic uncertainty, based on the work described in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup>:
@@ -10,10 +11,12 @@ A Python implementation of a classifier for linguistic uncertainty, based on the
 Vincze, V. (2015). Uncertainty detection in natural language texts (Doctoral dissertation, szte).
 ```
 
+---
 ### Corpora
 
-This classifier was trained using the human-annotated Szeged Uncertainty Corpus ([XML](http://rgai.inf.u-szeged.hu/index.php?lang=en&page=uncertainty), [JSON](http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/szeged_uncertainty_json.tar.gz) [RAW](http://rgai.inf.u-szeged.hu/project/nlp/uncertainty/clexperiments.zip)), which is composed of three sub-corpora - BioScape 2.0<sup><b>[`[2]`](#f2)</b></sup>, FactBank 2.0<sup><b>[`[3]`](#f3)</b></sup>, and WikiWeasel 2.0<sup><b>[`[4]`](#f4)</b></sup>.
+This classifier was trained using the human-annotated Szeged Uncertainty Corpus ([XML](http://rgai.inf.u-szeged.hu/index.php?lang=en&page=uncertainty), [JSON](http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/szeged_uncertainty_json.tar.gz), [RAW](http://rgai.inf.u-szeged.hu/project/nlp/uncertainty/clexperiments.zip)), which is composed of three sub-corpora - BioScape 2.0<sup><b>[`[2]`](#f2)</b></sup>, FactBank 2.0<sup><b>[`[3]`](#f3)</b></sup>, and WikiWeasel 2.0<sup><b>[`[4]`](#f4)</b></sup>.
 
+---
 ### Install
 
 Use the following commands to install dependencies:
@@ -24,6 +27,7 @@ Use the following commands to install dependencies:
     pip install -r requirements.txt
 ```
 
+---
 ### Usage
 
 ``` bash
@@ -33,17 +37,19 @@ Use the following commands to install dependencies:
 
     # Train the sentence-based classifier.
     # NOTE: This repository has a pre-trained classifier included.
-    python model.py cue
+    python model.py sentence
 
     # Classify the given documents.
     # NOTE: A sample test file is included: /test_data.txt
     python model.py classify [cue|sentence] <filename>
 ```
 
+---
 ### Feature Set
 
 The features used to train this implementation of the classifier were reverse-engineered from those provided in the Szeged Uncertainty Corpus. They are briefly described below with examples.
 
+---
 #### Surface Form of Tokens
 
 ##### 1) Prefixes of Length 3-5
@@ -77,25 +83,26 @@ A string of characters representing the <em>surface-pattern</em> or <em>shape</e
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating``<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``a`` (<em>in</em>), ``Aa`` (<em>Regulating</em>), ``Aa`` (<em>Cellular</em>)
 
+---
 #### Syntactic Properties of Tokens
 
 ##### 5) Part-of-Speech Tags w/ a Window of Length 2
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS</em>) ``in`` (<em>IN</em>) ``Regulating`` (<em>VBG</em>) ``Cellular`` (<em>JJ</em>) ``Immunity`` (<em>NN</em>)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>VBG</em>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS</em>) ``in`` (<em>IN</em>) ``Regulating`` (<em>VBG</em>) ``Cellular`` (<em>JJ</em>) ``Immunity`` (<em>NN</em>) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>VBG</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``NNS``, ``IN``, ``VBG``, ``JJ``, ``NN``
 
 ##### 6) Syntactic Chunk w/ a Window of Length 2
 
 The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were obtained using the C&C Chunker. Due to lack of availability, we used the <<CHUNKER>> from NLTK.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>I-np</em>) ``in`` (<em>B-pp</em>) ``Regulating`` (<em>B-vp</em>) ``Cellular`` (<em>B-np</em>) ``Immunity`` (<em>I-np</em>)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>B-vp</em>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>I-np</em>) ``in`` (<em>B-pp</em>) ``Regulating`` (<em>B-vp</em>) ``Cellular`` (<em>B-np</em>) ``Immunity`` (<em>I-np</em>) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>B-vp</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``I-np``, ``B-pp``, ``B-vp``, ``B-np``, ``I-np``
 
 ##### 7) Combinations
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS/I-np</em>) ``in`` (<em>IN/B-pp</em>) ``Regulating`` (<em>VBG/B-vp</em>) ``Cellular`` (<em>JJ/B-np</em>) ``Immunity`` (<em>NN/I-np</em>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS/I-np</em>) ``in`` (<em>IN/B-pp</em>) ``Regulating`` (<em>VBG/B-vp</em>) ``Cellular`` (<em>JJ/B-np</em>) ``Immunity`` (<em>NN/I-np</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>VBG/B-vp</em>)
 * <b>Stem &amp; Chunk: </b> ``regul B-vp``
 * <b>Current Chunk w/ Neighboring Stems/Lemmas: </b> ``B-vp in``, ``B-vp cellular``
@@ -103,11 +110,13 @@ The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were
 * <b>Current Stem/Lemma w/ Current POS or Current Chunk:<sup><b>[`[A]`](#n1)</b></sup> </b> ``regul B-vp``, ``regul VBG``
 * <b>Current Stem/Lemma w/ Neighboring POS:<sup><b>[`[B]`](#n2)</b></sup> </b>
 
+---
 ### Contact
 If you have questions regarding this API, please contact [bsm9339@rit.edu](mailto:bsm9339@rit.edu) (Benjamin Meyers) or [nm6061@rit.edu](mailto:nm6061@rit.edu) (Nuthan Munaiah).
 
 For questions regarding the annotated dataset or the theory behind the uncertainty classifier, please contact [szarvas@inf.u-szeged.hu](mailto:szarvas@inf.u-szeged.hu) (György Szarvas), [rfarkas@inf.u-szeged.hu](mailto:rfarkas@inf.u-szeged.hu) (Richárd Farkas), and/or [vinczev@inf.u-szeged.hu](mailto:vinczev@inf.u-szeged.hu) (Veronika Vincze).
 
+---
 ### Footnotes
 
 <a name="n1">`[A]`</a> This feature is present in the reverse-engineered dataset, but is not described within Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup>
