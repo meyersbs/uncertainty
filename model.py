@@ -1,89 +1,154 @@
+import csv
 import _pickle
-import json
-import numpy as np
-import os
-import sklearn
 import sys
 
-from scipy.sparse import csr_matrix
+from word import *
+from sentence import *
 
-from scripts.convert import *
-from scripts.train import *
-from features.features import *
-from corpora import *
-
-MODEL_FILENAME = os.path.join(
-        os.path.split(__file__)[0], 'uncertainty-model.p'
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+        classification_report, precision_recall_fscore_support
     )
+from sklearn.model_selection import train_test_split
 
-CLASSIFIER = _pickle.load(open(MODEL_FILENAME, 'rb'))
+DATA_FILE = 'data/merged_data'
 
-def score(document):
-    """
-    Given a document, calculate it's uncertainty against the pre-trained model.
+def classify(command, test_file):
+    if command == 'cue':
+        words = Words(_get_lines(test_file))
+        X, y = words.get_data()
+        vectorizer = DictVectorizer()
 
-    Input: [{'text': "I am the walrus."}]
-    Output: {'uncertain': confidence, 'not uncertain': confidence}
-    """
-    global CLASSIFIER
-    feature_set = get_features(document)
-    feature_vector = [feature_set[f] for f in sorted(feature_set.keys())]
-    x = csr_matrix(np.asarray([feature_vector]))
-    probs = CLASSIFIER.predict_proba(x)
+        classifier = _pickle.load(open('uncertainty-cue-model.p', 'rb'))
+        y_pred = classifier.predict(X)
+        _show_performance(y, y_pred)
+    elif command == 'sentence':
+        sentences = Sentences(_get_sentences(test_file))
+        X, y = sentences.get_data()
+        S, _, g, _ = train_test_split(X, y, test_size=0.0)
+        X, y = _get_worddata(S)
 
-    probs = {'uncertain': probs[0][1], 'not_uncertain': probs[0][0]}
+        vectorizer = DictVectorizer()
+        classifier = _pickle.load(open('uncertainty-sent-model.p', 'rb'))
 
-    return probs
+        y_pred = list()
+        for sent in S:
+            A, _ = sent.words.get_data()
+            A = vectorizer.transform(A)
+            y_pred.append(_classify_sentence(classifier, A))
 
-if __name__ == "__main__":
+        _show_performance(g, y_pred)
+
+def cue(data=DATA_FILE):
+    words = Words(_get_lines(data))
+    X, y = words.get_data()
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+
+    vectorizer = DictVectorizer()
+    X_train = vectorizer.fit_transform(X_train)
+    X_test = vectorizer.transform(X_test)
+
+    classifier = LogisticRegression(n_jobs=-1)
+    classifier.fit(X_train, y_train)
+    y_pred = classifier.predict(X_test)
+    _show_performance(y_test, y_pred)
+
+    _pickle.dump(classifier, open('uncertainty-cue-model.p', 'wb'))
+
+
+def sentence(data=DATA_FILE):
+    sentences = Sentences(_get_sentences(data))
+    X, y = sentences.get_data()
+
+    s_train, s_test, g_train, g_test = train_test_split(X, y, test_size=0.25)
+
+    X_train, y_train = _get_worddata(s_train)
+
+    vectorizer = DictVectorizer()
+    X_train = vectorizer.fit_transform(X_train)
+
+    classifier = LogisticRegression(n_jobs=-1)
+    classifier.fit(X_train, y_train)
+
+    y_pred = list()
+    for sentence in s_test:
+        X_test, _ = sentence.words.get_data()
+        X_test = vectorizer.transform(X_test)
+        y_pred.append(_classify_sentence(classifier, X_test))
+
+    _show_performance(g_test, y_pred)
+
+    _pickle.dump(classifier, open('uncertainty-sent-model.p', 'wb'))
+
+def _classify_sentence(classifier, X):
+    y_pred = classifier.predict(X)
+    for item in y_pred:
+        if item == 'u':
+            return item
+    return 'c'
+
+
+def _get_lines(filepath):
+    lines = None
+    with open(filepath) as file:
+        lines = file.readlines()
+    return lines
+
+
+def _get_sentences(filepath):
+    sentences = list()
+    _lines = list()
+    for line in _get_lines(filepath):
+        if line.strip() == '':  # End of Sentence
+            sentences.append(_lines)
+            _lines = list()
+            continue
+        _lines.append(line)
+    return sentences
+
+
+def _get_worddata(sentences):
+    X, y = list(), list()
+    for sentence in sentences:
+        X_, y_ = sentence.words.get_data()
+        X.extend(X_)
+        y.extend(y_)
+    return X, y
+
+
+def _help():
+    sys.stderr.write('USAGE: {} command\n'.format(sys.argv[0]))
+    sys.stderr.write('  command: One of {}\n'.format(
+            ','.join(COMMANDS.keys())
+        ))
+    sys.exit(1)
+
+
+def _show_performance(y_test, y_pred):
+    precision, recall, fscore, support = precision_recall_fscore_support(
+            y_test, y_pred, average='binary', pos_label='u'
+        )
+    print('{} Performance'.format('#' * 7))
+    print()
+    print('  {:15} {:3.2%}\n  {:15} {:3.2%}\n  {:15} {:3.2%}'.format(
+            'Precision', precision, 'Recall', recall, 'F1', fscore
+        ))
+    print()
+    print('{} Classification Report'.format('#' * 7))
+    print()
+    print(classification_report(y_test, y_pred))
+
+
+COMMANDS = {'cue': cue, 'sentence': sentence, 'classify': classify}
+
+if __name__ == '__main__':
     args = sys.argv[1:]
-    if len(args) < 1:
-        sys.exit(1)
+    if len(args) == 0:
+        _help()
+    elif len(args) == 1 and args[0] in COMMANDS:
+        COMMANDS[args[0]]()
+    elif len(args) == 3 and args[0] in COMMANDS and args[1] in COMMANDS:
+        COMMANDS[args[0]](args[1], args[2])
     else:
-        if args[0] == "convert":
-
-            WikiConverter(WIKI_OLD, WIKI_RAW, WIKI_NEW).convert()
-            FactbankConverter(FACTBANK_OLD, FACTBANK_RAW, FACTBANK_NEW).convert()
-            BioBmcConverter(BIO_BMC_OLD, BIO_BMC_RAW, BIO_BMC_NEW).convert()
-            BioFlyConverter(BIO_FLY_OLD, BIO_FLY_RAW, BIO_FLY_NEW).convert()
-            BioHbcConverter(BIO_HBC_OLD, BIO_HBC_RAW, BIO_HBC_NEW).convert()
-        elif args[0] == "train":
-            print("Gathering all available training data....")
-            all_docs = []
-            all_docs += json.loads(open(WIKI_NEW, 'r').read())
-            all_docs += json.loads(open(FACTBANK_NEW, 'r').read())
-            all_docs += json.loads(open(BIO_BMC_NEW, 'r').read())
-            all_docs += json.loads(open(BIO_FLY_NEW, 'r').read())
-            all_docs += json.loads(open(BIO_HBC_NEW, 'r').read())
-            print(len(all_docs))
-
-            print("Starting to train model...")
-            FITTED_SVC = train(all_docs, test_size=float(args[1]))
-
-            print("Dumping model to disk...")
-            _pickle.dump(FITTED_SVC, open("uncertainty-svm.p", "wb"))
-
-            print("Tidying up...")
-        elif args[0] == "classify":
-            documents = []
-            print("Formatting the given documents...")
-            with open(args[1], 'r') as doc:
-                for line in doc.readlines():
-                    documents.append({'text': line, 'ccue': {}})
-
-            uncertain = []
-            not_uncertain = []
-            for i, document in enumerate(documents):
-                probs = score(document)
-                uncertain.append(probs['uncertain'])
-                not_uncertain.append(probs['not_uncertain'])
-
-                print("\n==== Sentence " + str(i) + ":")
-                print("==== " + str(document['text']))
-                print("\tP(uncertain) = %.3f" % probs['uncertain'])
-                print("\tP(not_uncertain) = %.3f" % probs['not_uncertain'])
-
-            print("\n==== Document:")
-            print("\tP(uncertain) = %.3f" % np.mean(uncertain))
-            print("\tP(not_uncertain) = %.3f" % np.mean(not_uncertain))
-
+        _help()
