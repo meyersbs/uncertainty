@@ -70,7 +70,7 @@ The stem/lemma of the two previous tokens, the current token, and the two follow
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating``<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``cell``, ``in``, ``regulate``, ``cellular``, ``immun``
 
-##### 4) Pattern Prefixes w/ a Window of Length 1
+##### 4) Surface Patterns w/ a Window of Length 1
 
 A string of characters representing the <em>surface-pattern</em> or <em>shape</em> of a word.
 * ``A`` and ``a`` denote uppercase and lowercase character sequences, respectively.
@@ -83,16 +83,24 @@ A string of characters representing the <em>surface-pattern</em> or <em>shape</e
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating``<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``a`` (<em>in</em>), ``Aa`` (<em>Regulating</em>), ``Aa`` (<em>Cellular</em>)
 
+##### 5) Pattern Prefix
+
+The first character in the surface pattern of the current token.<sup><b>[`[A]`](#n1)</b></sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells in Regulating Cellular Immunity``<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating``<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``A``
+
 ---
 #### Syntactic Properties of Tokens
 
-##### 5) Part-of-Speech Tags w/ a Window of Length 2
+##### 6) Part-of-Speech Tags w/ a Window of Length 2
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS</em>) ``in`` (<em>IN</em>) ``Regulating`` (<em>VBG</em>) ``Cellular`` (<em>JJ</em>) ``Immunity`` (<em>NN</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>VBG</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``NNS``, ``IN``, ``VBG``, ``JJ``, ``NN``
 
-##### 6) Syntactic Chunk w/ a Window of Length 2
+##### 7) Syntactic Chunk w/ a Window of Length 2
 
 The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were obtained using the C&C Chunker. Due to lack of availability, we used the <<CHUNKER>> from NLTK.
 
@@ -100,7 +108,7 @@ The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>B-vp</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Features: ``I-np``, ``B-pp``, ``B-vp``, ``B-np``, ``I-np``
 
-##### 7) Combinations
+##### 8) Combinations
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS/I-np</em>) ``in`` (<em>IN/B-pp</em>) ``Regulating`` (<em>VBG/B-vp</em>) ``Cellular`` (<em>JJ/B-np</em>) ``Immunity`` (<em>NN/I-np</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>VBG/B-vp</em>)

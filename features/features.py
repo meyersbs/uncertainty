@@ -17,6 +17,9 @@ def _format_surface_patterns(pattern_list, indices, offset):
     for pattern in pattern_list:
         key = 'pattern_' + str(indices[-1]-offset) + '_' + str(pattern)
         formatted[key] = 1.0
+        if indices[-1]-offset == 0:
+            key = 'pattern_prefix_' + str(pattern[0])
+            formatted[key] = 1.0
         indices.pop()
 
     return formatted
@@ -165,15 +168,18 @@ def get_pos_tags(sent_list, curr_pos):
     tags = [pos_tag([sent_list[x]])[0][1] for x in indices]
     return _format_pos_tags(tags, list(reversed(indices)), curr_pos)
 
-def get_chunks(sent_list, curr_pos):
+def get_chunks(sent_list, curr_pos, treeparse=None):
+    if treeparse is None:
+        treeparse = SPLAT(" ".join(sent_list)).treestrings()
+
+    return treeparse
     # TODO: Figure out how to use C&C Tools or an NLTK Chunker.
-    pass
 
 def get_combinations(sent_list, curr_pos):
-    # TODO: Implement Feature 7 from the README.
+    # TODO: Implement Feature 8 from the README.
     pass
 
-def get_features(sentence):
+def get_features(sentence, treeparse=None):
     feature_dict = {}
     sent_list = sentence.split()
     for i, token in enumerate(sent_list):
@@ -183,6 +189,7 @@ def get_features(sentence):
         feature_dict[token].update(get_suffixes(token))
         feature_dict[token].update(get_pos_tags(sent_list, i))
         feature_dict[token].update(get_surface_patterns(sent_list, i))
+        print(get_chunks(sent_list, i, treeparse))
 
     return feature_dict
 
