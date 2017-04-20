@@ -12,6 +12,15 @@ GREEK_UPPER = re.compile(u'[ΓΔΘΛΞΠΣΦΨΩ]')
 ROMAN_LOWER = re.compile('m{0,4}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})')
 ROMAN_UPPER = re.compile('M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})')
 
+def _format_surface_patterns(pattern_list, indices, offset):
+    formatted = {}
+    for pattern in pattern_list:
+        key = 'pattern_' + str(indices[-1]-offset) + '_' + str(pattern)
+        formatted[key] = 1.0
+        indices.pop()
+
+    return formatted
+
 def clean_word_pattern(word_pattern):
     return ''.join(c for c, _ in groupby(word_pattern))
 
@@ -52,7 +61,16 @@ def get_surface_patterns(sent_list, curr_pos):
     for tok in toks:
         surf_pats.append(get_word_pattern(tok))
 
-    return surf_pats
+    return _format_surface_patterns(surf_pats, list(reversed(indices)), curr_pos)
+
+def _format_stems(stem_list, indices, offset):
+    formatted = {}
+    for stem in stem_list:
+        key = 'lemma_' + str(indices[-1]-offset) + '_' + str(stem)
+        formatted[key] = 1.0
+        indices.pop()
+
+    return formatted
 
 def get_stems(sent_list, curr_pos):
     stems = []
@@ -63,25 +81,78 @@ def get_stems(sent_list, curr_pos):
     indices = list(filter(lambda x: not x >= len(sent_list), indices))
 
     stems = [STEMMER.stem(sent_list[x]) for x in indices]
-    return stems
+    return _format_stems(stems, list(reversed(indices)), curr_pos)
+
+def _format_prefixes(prefix_list):
+    formatted = {}
+    indices = [5, 4, 3]
+    for prefix in prefix_list:
+        key = 'prefix_' + str(indices[-1]) + '_' + str(prefix)
+        formatted[key] = 1.0
+        indices.pop()
+
+    return formatted
 
 def get_prefixes(token):
     prefixes = []
-    i = 3
-    while(i < 6 and i < len(token)):
-        prefixes.append(token[0:i])
-        i += 1;
+    # Example: token = 'of', token = 'the'
+    if len(token) <= 3:
+        prefixes.append(token) # 'of', 'the'
+        prefixes.append(token) # 'of', 'the'
+        prefixes.append(token) # 'of', 'the'
+    # Example: token = 'that'
+    elif len(token) == 4:
+        prefixes.append(token[0:3]) # 'tha'
+        prefixes.append(token[0:4]) # 'that'
+        prefixes.append(token[0:4]) # 'that'
+    # Example: token = 'Bagels'
+    else:
+        i = 3
+        while(i < 6 and i < len(token)):
+            prefixes.append(token[0:i])
+            i += 1;
 
-    return prefixes
+    return _format_prefixes(prefixes)
+
+def _format_suffixes(suffix_list):
+    formatted = {}
+    indices = [5, 4, 3]
+    for suffix in suffix_list:
+        key = 'suffix_' + str(indices[-1]) + '_' + str(suffix)
+        formatted[key] = 1.0
+        indices.pop()
+
+    return formatted
 
 def get_suffixes(token):
     suffixes = []
-    i = 3
-    while(i < 5 and i < len(token)):
-        suffixes.append(token[-i:])
-        i += 1;
+    # Example: token = 'of', token = 'the'
+    if len(token) <= 3:
+        suffixes.append(token) # 'of', 'the'
+        suffixes.append(token) # 'of', 'the'
+        suffixes.append(token) # 'of', 'the'
+    # Example: token = 'that'
+    elif len(token) == 4:
+        suffixes.append(token[-3:]) # 'hat'
+        suffixes.append(token) # 'that'
+        suffixes.append(token) # 'that'
+    # Example: token = 'Bagels'
+    else:
+        i = 3
+        while(i < 6 and i < len(token)):
+            suffixes.append(token[-i:])
+            i += 1;
 
-    return suffixes
+    return _format_suffixes(suffixes)
+
+def _format_pos_tags(tags_list, indices, offset):
+    formatted = {}
+    for tag in tags_list:
+        key = 'pos_' + str(indices[-1]-offset) + '_' + str(tag)
+        formatted[key] = 1.0
+        indices.pop()
+
+    return formatted
 
 def get_pos_tags(sent_list, curr_pos):
     tags = []
@@ -91,8 +162,8 @@ def get_pos_tags(sent_list, curr_pos):
     indices = list(filter(lambda x: not x < 0, indices))
     indices = list(filter(lambda x: not x >= len(sent_list), indices))
 
-    tags = [pos_tag(sent_list[x])[1] for x in indices]
-    return tags
+    tags = [pos_tag([sent_list[x]])[0][1] for x in indices]
+    return _format_pos_tags(tags, list(reversed(indices)), curr_pos)
 
 def get_chunks(sent_list, curr_pos):
     # TODO: Figure out how to use C&C Tools or an NLTK Chunker.
@@ -100,3 +171,20 @@ def get_chunks(sent_list, curr_pos):
 
 def get_combinations(sent_list, curr_pos):
     # TODO: Implement Feature 7 from the README.
+    pass
+
+def get_features(sentence):
+    feature_dict = {}
+    sent_list = sentence.split()
+    for i, token in enumerate(sent_list):
+        feature_dict[token] = {}
+        feature_dict[token].update(get_stems(sent_list, i))
+        feature_dict[token].update(get_prefixes(token))
+        feature_dict[token].update(get_suffixes(token))
+        feature_dict[token].update(get_pos_tags(sent_list, i))
+        feature_dict[token].update(get_surface_patterns(sent_list, i))
+
+    return feature_dict
+
+sentence = "Cells in Regulating Cellular Immunity"
+print(get_features(sentence))
