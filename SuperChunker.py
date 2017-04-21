@@ -1,8 +1,7 @@
-from nltk import pos_tag
 from nltk.chunk import ChunkParserI
 from nltk.chunk import conllstr2tree as to_tree
 from nltk.chunk import tree2conlltags as to_tags
-from nltk.corpus import treebank_chunk
+from nltk.corpus import treebank_chunk, conll2000
 from nltk.tag import UnigramTagger, BigramTagger
 
 def tag_chunks(chunk_sents):
@@ -10,11 +9,10 @@ def tag_chunks(chunk_sents):
     return [[(t, c) for (w, t, c) in chunk_tags] for chunk_tags in tag_sents]
 
 
-
-
-class TreebankChunker(ChunkParserI):
+class SuperChunker(ChunkParserI):
     def __init__(self):
         self._chunks = tag_chunks(treebank_chunk.chunked_sents())
+        self._chunks += tag_chunks(conll2000.chunked_sents())
         self._backoff = UnigramTagger(self._chunks)
         self._chunk_tagger = BigramTagger(self._chunks, backoff=self._backoff)
 
@@ -25,6 +23,6 @@ class TreebankChunker(ChunkParserI):
         lines = [{"token": t, "pos": p, "chunk": c} for (t, (p, c)) in tok_pos_chunk if c]
         return lines
 
-chunker = TreebankChunker()
-print(chunker.parse(pos_tag(["Cells", "in", "Regulating", "Cellular", "Immunity"])))
-print(chunker.parse(pos_tag(["I", "am", "the", "walrus", "."])))
+#chunker = TreebankChunker()
+#print(chunker.parse(pos_tag(["Cells", "in", "Regulating", "Cellular", "Immunity"])))
+#print(chunker.parse(pos_tag(["I", "am", "the", "walrus", "."])))

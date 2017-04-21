@@ -1,9 +1,13 @@
 import csv
 import _pickle
+import pprint
 import sys
 
 from word import *
 from sentence import *
+from nltk.stem.porter import *
+from SuperChunker import *
+from features.features import *
 
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -13,6 +17,8 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 
 DATA_FILE = 'data/merged_data'
+PRINTER = pprint.PrettyPrinter(indent=4, width=80)
+STEMMER = PorterStemmer()
 
 def classify(command, test_file):
     if command == 'cue':
@@ -81,6 +87,24 @@ def sentence(data=DATA_FILE):
 
     _pickle.dump(classifier, open('uncertainty-sent-model.p', 'wb'))
 
+def features(data_file):
+    with open(data_file, 'r') as f:
+        filename = data_file + '.tsv'
+        with open(filename, 'w', newline='') as tsvfile:
+            tsv_writer = csv.writer(tsvfile, delimiter='\t', quotechar='|',
+                                    quoting=csv.QUOTE_MINIMAL)
+            for i, line in enumerate(f.readlines()):
+                features = get_features(line)
+                #print("=====")
+                #PRINTER.pprint(features)
+                for key, val in sorted(features.items()):
+                    (tok_num, tok) = key.split("_")
+                    row = ['sent' + str(i) + "token" + str(tok_num), str(tok),
+                           str(STEMMER.stem(tok)).lower(), 'X']
+                    for k, v in sorted(val.items()):
+                        row.append(str(k) + ":" + str(v))
+                    tsv_writer.writerow(row)
+
 def _classify_sentence(classifier, X):
     y_pred = classifier.predict(X)
     for item in y_pred:
@@ -139,8 +163,7 @@ def _show_performance(y_test, y_pred):
     print()
     print(classification_report(y_test, y_pred))
 
-
-COMMANDS = {'cue': cue, 'sentence': sentence, 'classify': classify}
+COMMANDS = {'cue': cue, 'sentence': sentence, 'classify': classify, 'features': features}
 
 if __name__ == '__main__':
     args = sys.argv[1:]
@@ -148,6 +171,8 @@ if __name__ == '__main__':
         _help()
     elif len(args) == 1 and args[0] in COMMANDS:
         COMMANDS[args[0]]()
+    elif len(args) == 2:
+        COMMANDS[args[0]](args[1])
     elif len(args) == 3 and args[0] in COMMANDS and args[1] in COMMANDS:
         COMMANDS[args[0]](args[1], args[2])
     else:

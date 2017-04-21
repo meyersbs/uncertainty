@@ -112,12 +112,9 @@ The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS/I-np</em>) ``in`` (<em>IN/B-pp</em>) ``Regulating`` (<em>VBG/B-vp</em>) ``Cellular`` (<em>JJ/B-np</em>) ``Immunity`` (<em>NN/I-np</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>VBG/B-vp</em>)
-* <b>Stem &amp; Chunk: </b> ``regul B-vp``
-* <b>Current Chunk w/ Neighboring Stems/Lemmas: </b> ``B-vp in``, ``B-vp cellular``
-* <b>Current POS w/ Neighboring Stems/Lemmas:<sup><b>[`[A]`](#n1)</b></sup> </b> ``VBG in``, ``VBG cellular``
-* <b>Current Stem/Lemma w/ Current POS or Current Chunk:<sup><b>[`[A]`](#n1)</b></sup> </b> ``regul B-vp``, ``regul VBG``
-* <b>Current Stem/Lemma w/ Neighboring POS:<sup><b>[`[B]`](#n2)</b></sup> </b>
 
+* <b>8-A)</b> Stems/Lemmas w/ Current Chunk w/ a Window of Length 1<sup><b>[`[A`](#n1)</b></sup>: ``B-vp in``, ``B-vp regul``, ``B-vp cellular``
+* <b>8-B)</b> Stems/Lemmas w/ Current POS w/ a Window of Length 1<sup><b>[`[A]`](#n1)</b></sup>: ``VBG in``, ``VBG regul``, ``VBG cellular``
 ---
 ### Classification
 
@@ -137,8 +134,6 @@ For questions regarding the annotated dataset or the theory behind the uncertain
 ### Footnotes
 
 <a name="n1">`[A]`</a> This feature is present in the reverse-engineered dataset, but is not described within Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup>
-
-<a name="n2">`[B]`</a> This feature is described in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup>, but is not present in the dataset.
 
 <a name="f1">`[1]`</a> [Vincze, V. (2015). Uncertainty detection in natural language texts (Doctoral dissertation, szte).](http://doktori.bibl.u-szeged.hu/2291/1/Vincze_Veronika_tezis.pdf)
 
