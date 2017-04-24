@@ -116,6 +116,7 @@ def features(data_file):
                     tsv_writer.writerow('')
                 else:
                     features = get_features(line)
+                    print(features)
                     for key, val in sorted(features.items()):
                         (tok_num, tok) = key.split("_")
                         row = ['sent' + str(i) + "token" + str(tok_num), str(tok),

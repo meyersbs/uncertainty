@@ -368,15 +368,23 @@ def get_features(sentence):
     feature_dict = {}
     sent_list = sentence.split()
     feats = get_token_features(sent_list)
+    prepend="000"
     for i, token in enumerate(sent_list):
-        feature_dict[str(i) + "_" + token] = {}
-        feature_dict[str(i) + "_" + token].update(get_feature1(token))
-        feature_dict[str(i) + "_" + token].update(get_feature2(token))
-        feature_dict[str(i) + "_" + token].update(get_feature3(sent_list, i))
-        feature_dict[str(i) + "_" + token].update(get_features4_5(sent_list, i))
-        feature_dict[str(i) + "_" + token].update(get_feature6(sent_list, i))
-        feature_dict[str(i) + "_" + token].update(get_feature7(sent_list, feats, i))
-        feature_dict[str(i) + "_" + token].update(get_feature8A(sent_list, feats, i))
-        feature_dict[str(i) + "_" + token].update(get_feature8B(sent_list, feats, i))
+        if i > 999:
+            prepend=""
+        elif i > 99:
+            prepend="0"
+        elif i > 9:
+            prepend="00"
+
+        feature_dict[prepend + str(i) + "_" + token] = {}
+        feature_dict[prepend + str(i) + "_" + token].update(get_feature1(token))
+        feature_dict[prepend + str(i) + "_" + token].update(get_feature2(token))
+        feature_dict[prepend + str(i) + "_" + token].update(get_feature3(sent_list, i))
+        feature_dict[prepend + str(i) + "_" + token].update(get_features4_5(sent_list, i))
+        feature_dict[prepend + str(i) + "_" + token].update(get_feature6(sent_list, i))
+        feature_dict[prepend + str(i) + "_" + token].update(get_feature7(sent_list, feats, i))
+        feature_dict[prepend + str(i) + "_" + token].update(get_feature8A(sent_list, feats, i))
+        feature_dict[prepend + str(i) + "_" + token].update(get_feature8B(sent_list, feats, i))
 
     return feature_dict
