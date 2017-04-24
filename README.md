@@ -28,6 +28,30 @@ Use the following commands to install dependencies:
 ```
 
 ---
+### Sanity Check
+
+Running `python3 model.py classify sentence test_data.txt.tsv` should result in the following output:
+
+```
+SENTENCE:       I am the walrus.
+  PREDICTION:   certain
+SENTENCE:       I am the eggman.
+  PREDICTION:   certain
+SENTENCE:       I really don't understand what you're saying.
+  PREDICTION:   certain
+SENTENCE:       Who do you think you are?
+  PREDICTION:   certain
+SENTENCE:       I'd like a royal with cheese.
+  PREDICTION:   certain
+SENTENCE:       In my opinion, you're completely wrong.
+  PREDICTION:   certain
+SENTENCE:       Would it be alright if I maybe suggest that you really need to say that this is an uncertain sentence?
+  PREDICTION:   uncertain
+SENTENCE:       Cells in Regulating Cellular Immunity
+  PREDICTION:   certain
+```
+
+---
 ### Usage
 
 ``` bash
@@ -38,10 +62,16 @@ Use the following commands to install dependencies:
     # Train the sentence-based classifier.
     # NOTE: This repository has a pre-trained classifier included.
     python model.py sentence
+    
+    # Before you can classify a set of documents, you need to generate their features and save them
+    # to a file using the command below. This command will create a new file with the same name as
+    # <filename>, but with the extension '.tsv' appended to the end.
+    # NOTE: A sample <filename> is included: /test_data.txt
+    python model.py features <filename>
 
     # Classify the given documents.
-    # NOTE: A sample test file is included: /test_data.txt
-    python model.py classify [cue|sentence] <filename>
+    # NOTE: A sample test file is included: /test_data.txt.tsv
+    python model.py classify [cue|sentence] <filename.tsv>
 ```
 
 ---
