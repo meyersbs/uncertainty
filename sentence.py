@@ -5,12 +5,18 @@ __all__ = ['Sentence', 'Sentences']
 
 class Sentence(object):
     def __init__(self, lines):
+        self.sent = []
         self.words = Words(lines)
         self.group = 'c'
         for word in self.words.words:
             if word.group == 'u':
                 self.group = 'u'
                 break
+        for word in self.words.words:
+            self.sent.append(word.word)
+
+    def get_sent(self):
+        return " ".join(self.sent)
 
 
 class Sentences(object):

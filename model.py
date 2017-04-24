@@ -1,7 +1,9 @@
 import csv
 import _pickle
+import numpy as np
 import pprint
 import sys
+import warnings
 
 from word import *
 from sentence import *
@@ -15,6 +17,9 @@ from sklearn.metrics import (
         classification_report, precision_recall_fscore_support
     )
 from sklearn.model_selection import train_test_split
+from scipy.sparse import csr_matrix
+
+warnings.filterwarnings("ignore", category=FutureWarning, module="__main__")
 
 DATA_FILE = 'data/merged_data'
 PRINTER = pprint.PrettyPrinter(indent=4, width=80)
@@ -23,28 +28,39 @@ STEMMER = PorterStemmer()
 def classify(command, test_file):
     if command == 'cue':
         words = Words(_get_lines(test_file))
-        X, y = words.get_data()
-        vectorizer = DictVectorizer()
+        X, y, z = words.get_data()
+
+        vectorizer = _pickle.load(open('uncertainty-cue-vectorizer.p', 'rb'))
+        X = vectorizer.transform(X)
 
         classifier = _pickle.load(open('uncertainty-cue-model.p', 'rb'))
-        y_pred = classifier.predict(X)
-        _show_performance(y, y_pred)
+        preds = classifier.predict(X)
+
+        return _classification_report(z, preds, text="WORD:\t\t")
     elif command == 'sentence':
         sentences = Sentences(_get_sentences(test_file))
         X, y = sentences.get_data()
-        S, _, g, _ = train_test_split(X, y, test_size=0.0)
-        X, y = _get_worddata(S)
 
-        vectorizer = DictVectorizer()
+        vectorizer = _pickle.load(open('uncertainty-sent-vectorizer.p', 'rb'))
         classifier = _pickle.load(open('uncertainty-sent-model.p', 'rb'))
 
-        y_pred = list()
-        for sent in S:
-            A, _ = sent.words.get_data()
+        preds = list()
+        sents = list()
+        for sent in X:
+            sents.append(sent.get_sent())
+            A, _, _ = sent.words.get_data()
             A = vectorizer.transform(A)
-            y_pred.append(_classify_sentence(classifier, A))
+            preds.append(_classify_sentence(classifier, A))
 
-        _show_performance(g, y_pred)
+        return _classification_report(sents, preds)
+
+def _classification_report(elems, preds, text="SENTENCE:\t"):
+    for i, elem in enumerate(elems):
+        print(text + elem)
+        if preds[i] == 'c':
+            print("  PREDICTION:\tcertain")
+        else:
+            print("  PREDICTION:\tuncertain")
 
 def cue(data=DATA_FILE):
     words = Words(_get_lines(data))
@@ -61,6 +77,7 @@ def cue(data=DATA_FILE):
     _show_performance(y_test, y_pred)
 
     _pickle.dump(classifier, open('uncertainty-cue-model.p', 'wb'))
+    _pickle.dump(vectorizer, open('uncertainty-cue-vectorizer.p', 'wb'))
 
 
 def sentence(data=DATA_FILE):
@@ -86,6 +103,7 @@ def sentence(data=DATA_FILE):
     _show_performance(g_test, y_pred)
 
     _pickle.dump(classifier, open('uncertainty-sent-model.p', 'wb'))
+    _pickle.dump(vectorizer, open('uncertainty-sent-vectorizer.p', 'wb'))
 
 def features(data_file):
     with open(data_file, 'r') as f:
@@ -94,16 +112,17 @@ def features(data_file):
             tsv_writer = csv.writer(tsvfile, delimiter='\t', quotechar='|',
                                     quoting=csv.QUOTE_MINIMAL)
             for i, line in enumerate(f.readlines()):
-                features = get_features(line)
-                #print("=====")
-                #PRINTER.pprint(features)
-                for key, val in sorted(features.items()):
-                    (tok_num, tok) = key.split("_")
-                    row = ['sent' + str(i) + "token" + str(tok_num), str(tok),
-                           str(STEMMER.stem(tok)).lower(), 'X']
-                    for k, v in sorted(val.items()):
-                        row.append(str(k) + ":" + str(v))
-                    tsv_writer.writerow(row)
+                if line.strip() == '':
+                    tsv_writer.writerow('')
+                else:
+                    features = get_features(line)
+                    for key, val in sorted(features.items()):
+                        (tok_num, tok) = key.split("_")
+                        row = ['sent' + str(i) + "token" + str(tok_num), str(tok),
+                               str(STEMMER.stem(tok)).lower(), pos_tag(tok)[0][1], 'X']
+                        for k, v in sorted(val.items()):
+                            row.append(str(k) + ":" + str(v))
+                        tsv_writer.writerow(row)
 
 def _classify_sentence(classifier, X):
     y_pred = classifier.predict(X)

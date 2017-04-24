@@ -27,11 +27,12 @@ class Words(object):
             self.words.append(Word(line))
 
     def get_data(self, binary=True):
-        X, y = list(), list()
+        X, y, z = list(), list(), list()
         for word in self.words:
             X.append(word.features)
             if binary:
                 y.append(word.group)
             else:
                 y.append(word.label)
-        return X, y
+            z.append(word.word)
+        return X, y, z

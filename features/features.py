@@ -1,11 +1,15 @@
 import nltk
 import pprint
 import re
+import warnings
+
 from SuperChunker import *
 
 from itertools import groupby
 from nltk import pos_tag
 from nltk.stem.porter import *
+
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 CHUNKER = SuperChunker()
 STEMMER = PorterStemmer()
