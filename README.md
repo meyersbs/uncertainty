@@ -39,10 +39,9 @@ Use the following commands to install dependencies:
     # NOTE: This repository has a pre-trained classifier included.
     python model.py sentence
     
-    # Before you can classify a set of documents, you need to generate
-    # their features and save them to a file using the command below. This
-    # command will create a new file with the same name as <filename>, but
-    # with the extension '.tsv' appended to the end.
+    # Before you can classify a set of documents, you need to generate their features and save them
+    # to a file using the command below. This command will create a new file with the same name as
+    # <filename>, but with the extension '.tsv' appended to the end.
     # NOTE: A sample <filename> is included: /test_data.txt
     python model.py features <filename>
 
