@@ -29,7 +29,7 @@ STEMMER = PorterStemmer()
 def classify(command, test_file):
     if type(test_file) == str:
         tempName = "tempFile" + str(random.randint(0,10000)) + ".txt"
-        with open(tempName "w") as f:
+        with open(tempName, "w") as f:
             f.write(test_file)
         
         features(tempName)
