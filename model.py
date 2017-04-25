@@ -2,6 +2,7 @@ import csv
 import _pickle
 import numpy as np
 import pprint
+import random
 import sys
 import warnings
 
@@ -26,6 +27,14 @@ PRINTER = pprint.PrettyPrinter(indent=4, width=80)
 STEMMER = PorterStemmer()
 
 def classify(command, test_file):
+    if type(test_file) == str:
+        tempName = "tempFile" + str(random.randint(0,10000)) + ".txt"
+        with open(tempName "w") as f:
+            f.write(test_file)
+        
+        features(tempName)
+        test_file = tempName
+        
     if command == 'cue':
         words = Words(_get_lines(test_file))
         X, y, z = words.get_data()
@@ -35,6 +44,11 @@ def classify(command, test_file):
 
         classifier = _pickle.load(open('uncertainty-cue-model.p', 'rb'))
         preds = classifier.predict(X)
+
+        try:
+            os.remove(test_file)
+        except:
+            pass
 
         return _classification_report(z, preds, text="WORD:\t\t")
     elif command == 'sentence':
@@ -52,15 +66,25 @@ def classify(command, test_file):
             A = vectorizer.transform(A)
             preds.append(_classify_sentence(classifier, A))
 
+        try:
+            os.remove(test_file)
+        except:
+            pass
+
         return _classification_report(sents, preds)
 
 def _classification_report(elems, preds, text="SENTENCE:\t"):
+    elem_dict = {}
     for i, elem in enumerate(elems):
         print(text + elem)
         if preds[i] == 'c':
+            elem_dict[elem] = 'c'
             print("  PREDICTION:\tcertain")
         else:
+            elem_dict[elem] = 'u'
             print("  PREDICTION:\tuncertain")
+
+    return elem_dict
 
 def cue(data=DATA_FILE):
     words = Words(_get_lines(data))
