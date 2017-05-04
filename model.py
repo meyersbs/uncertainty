@@ -256,51 +256,67 @@ def _split_data(X, y, test_size=0.25, binary=True):
 
 def classify(command, test_file, binary=True):
     if command == 'cue':
-        X, y, z = Words(_get_lines(test_file)).get_data()
+        X, y, z = Words(_get_lines(test_file)).get_data(binary=binary)
 
-        vectorizer = _pickle.load(open(CUE_VECTORIZER, 'rb'))
-        X = vectorizer.transform(X)
+        if binary:
+            vectorizer = _pickle.load(open(BIN_CUE_VECTORIZER, 'rb'))
+            X = vectorizer.transform(X)
 
-        classifier = _pickle.load(open(CUE_MODEL, 'rb'))
+            classifier = _pickle.load(open(BIN_CUE_MODEL, 'rb'))
+        else:
+            vectorizer = _pickle.load(open(MULTI_CUE_VECTORIZER, 'rb'))
+            X = vectorizer.transform(X)
+
+            classifier = _pickle.load(open(MULTI_CUE_MODEL, 'rb'))
 
         preds = classifier.predict(X)
-        #preds = classifier.predict_proba(X)
 
-        try:
-            os.remove(test_file)
-        except:
-            pass
+        _classification_report(z, preds, text="WORD:\t\t")
+        return z, preds
+    elif command == 'sent':
+        X, y = Sentences(_get_sentences(test_file)).get_data(binary=binary)
 
-        return _classification_report(z, preds, text="WORD:\t\t")
-    elif command == 'sentence':
-        X, y = Sentences(_get_sentences(test_file)).get_data()
+        if binary:
+            vectorizer = _pickle.load(open(BIN_SENT_VECTORIZER, 'rb'))
+            classifier = _pickle.load(open(BIN_SENT_MODEL, 'rb'))
+        else:
+            vectorizer = _pickle.load(open(MULTI_SENT_VECTORIZER, 'rb'))
+            classifier = _pickle.load(open(MULTI_SENT_MODEL, 'rb'))
 
-        vectorizer = _pickle.load(open(SENT_VECTORIZER, 'rb'))
-        classifier = _pickle.load(open(SENT_MODEL, 'rb'))
 
         preds, sents = list(), list()
         for sent in X:
-            sents.append(sent.get_sent())
-            A, _, _ = sent.words.get_data()
+            A, _, _ = sent.words.get_data(binary=binary)
             A = vectorizer.transform(A)
-            preds.append(_classify_sentence(classifier, A))
+            cls = _classify_sentence(classifier, A, binary=binary)
+            preds.append(cls[0])
+            sents.append(_tag_sent(sent, cls[1]))
 
-        try:
-            os.remove(test_file)
-        except:
-            pass
+        _classification_report(sents, preds)
+        return sents, preds
 
-        return _classification_report(sents, preds)
+def _tag_sent(sent, labels):
+    sent = sent.get_sent().split()
+
+    tagged_sent = []
+    for word, label in zip(sent, labels):
+        if label == "C":
+            tagged_sent.append(word)
+        else:
+            tagged_sent.append("(" + word + "-" + label + ")")
+
+    return " ".join(tagged_sent)
 
 def _classify_sentence(classifier, X, binary=True):
     y_pred = classifier.predict(X)
+    #print(y_pred)
     #y_pred = classifier.predict_proba(X)
 
     if binary:
-        for label in labels:
+        for label in y_pred:
             if label != "C":
-                return "U"
-        return "C"
+                return "U", y_pred
+        return "C", y_pred
     else:
         labs = {"C": 0, "U": 0, "I": 0, "N": 0, "E": 0, "D": 0}
         for label in y_pred:
@@ -317,11 +333,11 @@ def _classify_sentence(classifier, X, binary=True):
                     max_keys.append(k)
 
             if len(max_keys) == 1:
-                return max_keys[0]
+                return max_keys[0], y_pred
             else:
-                return "U"
+                return "U", y_pred
         else:
-            return "C"
+            return "C", y_pred
 '''
 def _pca(X, y):
     data = np.array(X, y)
@@ -487,15 +503,17 @@ def _help():
 
 def _classification_report(elems, preds, text="SENTENCE:\t"):
     """ Display a pretty, custom classification report. """
-    categories = {"C": "certain", "U": "uncertain", "E": "epistemic",
-                  "D": "doxastic", "I": "investigation", "N": "condition"}
+    categories = {"C": "Certain", "U": "Uncertain", "E": "Epistemic",
+                  "D": "Doxastic", "I": "Investigation", "N": "Condition"}
     for i, elem in enumerate(elems):
-        print(text + elem)
+        #print(text + elem)
         try:
-            print("  PREDICTION:\t" + categories[preds[i]])
+            print("  [" + categories[preds[i]] + "]\t" + elem)
         except Exception as e:
-            print("  PREDICTION:\tERROR")
+            print("  [ERROR]\t" + elem)
             continue
+
+    return True
 
 def _show_performance(y_test, y_pred, binary=True):
     """ Display Precision, Recall, and F1 for the target label(s). """

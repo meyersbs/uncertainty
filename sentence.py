@@ -24,13 +24,18 @@ class Sentence(object):
         labels = self.words.get_labels(binary=binary)
         if binary:
             for label in labels:
-                if label != "C":
+                if label == "X":
+                    return "X"
+                elif label != "C":
                     return "U"
             return "C"
         else:
             labs = {"C": 0, "U": 0, "I": 0, "N": 0, "E": 0, "D": 0}
             for label in labels:
-                labs[label] += 1
+                if label == "X":
+                    return "X"
+                else:
+                    labs[label] += 1
 
             if (labs["U"] != 0 or labs["E"] != 0 or labs["I"] != 0 or
                 labs["D"] != 0 or labs["N"] != 0):
