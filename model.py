@@ -266,6 +266,11 @@ def classify(command, test_file, binary=True):
         preds = classifier.predict(X)
         #preds = classifier.predict_proba(X)
 
+        try:
+            os.remove(test_file)
+        except:
+            pass
+
         return _classification_report(z, preds, text="WORD:\t\t")
     elif command == 'sentence':
         X, y = Sentences(_get_sentences(test_file)).get_data()
@@ -280,19 +285,10 @@ def classify(command, test_file, binary=True):
             A = vectorizer.transform(A)
             preds.append(_classify_sentence(classifier, A))
 
-        return _classification_report(sents, preds)
-    elif command == 'semantic':
-        X, y = Sentences(_get_sentences(test_file)).get_data(binary=False)
-
-        vectorizer = _pickle.load(open(SEM_VECTORIZER, 'rb'))
-        classifier = _pickle.load(open(SEM_MODEL, 'rb'))
-
-        preds, sents = list(), list()
-        for sent in X:
-            sents.append(sent.get_sent())
-            A, _, _ = sent.words.get_data()
-            A = vectorizer.transform(A)
-            preds.append(_classify_sentence(classifier, A, binary=False))
+        try:
+            os.remove(test_file)
+        except:
+            pass
 
         return _classification_report(sents, preds)
 
