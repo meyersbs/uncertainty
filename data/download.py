@@ -8,7 +8,7 @@ def download():
     urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/bmc", "bmc")
     urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/fly", "fly")
     urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/hbc", "hbc")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/megered_data", "merged_data")
+    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/merged_data", "merged_data")
     urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/news", "news")
     urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/wiki", "wiki")
     print("Finished!")
