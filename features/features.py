@@ -17,6 +17,7 @@ PRINTER = pprint.PrettyPrinter(indent=4, width=80)
 
 GREEK_LOWER = re.compile(u'[αβγδεζηθικλμξπρσςτυφψω]')
 GREEK_UPPER = re.compile(u'[ΓΔΘΛΞΠΣΦΨΩ]')
+#ΓΔΘΛΞΠΣΦΨΩ αβγδεζηθικλμξπρςστυφψω
 ROMAN_LOWER = re.compile(
                     'm{0,4}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})'
                 )
