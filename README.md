@@ -240,6 +240,10 @@ If you have questions regarding this API, please contact [bsm9339@rit.edu](mailt
 For questions regarding the annotated dataset or the theory behind the uncertainty classifier, please contact [szarvas@inf.u-szeged.hu](mailto:szarvas@inf.u-szeged.hu) (György Szarvas), [rfarkas@inf.u-szeged.hu](mailto:rfarkas@inf.u-szeged.hu) (Richárd Farkas), and/or [vinczev@inf.u-szeged.hu](mailto:vinczev@inf.u-szeged.hu) (Veronika Vincze).
 
 ---
+### Disclaimer
+There has been no collaboration between Vincze <em>et al.</em> and the developers of this codebase.
+
+---
 ### Footnotes
 
 <a name="n1">`[A]`</a> This feature is present in the reverse-engineered dataset, but is not described within Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup>
