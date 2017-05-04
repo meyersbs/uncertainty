@@ -14,7 +14,7 @@ Vincze, V. (2015). Uncertainty detection in natural language texts (Doctoral dis
 ---
 ### Corpora
 
-This classifier was trained using the human-annotated Szeged Uncertainty Corpus ([XML](http://rgai.inf.u-szeged.hu/index.php?lang=en&page=uncertainty), [JSON](http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/szeged_uncertainty_json.tar.gz), [RAW](http://rgai.inf.u-szeged.hu/project/nlp/uncertainty/clexperiments.zip)), which is composed of three sub-corpora - BioScape 2.0<sup><b>[`[2]`](#f2)</b></sup>, FactBank 2.0<sup><b>[`[3]`](#f3)</b></sup>, and WikiWeasel 2.0<sup><b>[`[4]`](#f4)</b></sup>.
+This classifier was trained using the human-annotated Szeged Uncertainty Corpus ([XML](http://rgai.inf.u-szeged.hu/index.php?lang=en&page=uncertainty), [JSON](http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/szeged_uncertainty_json.tar.gz), [RAW](http://rgai.inf.u-szeged.hu/project/nlp/uncertainty/uncertainty.zip)), which is composed of three sub-corpora - BioScape 2.0<sup><b>[`[2]`](#f2)</b></sup>, FactBank 2.0<sup><b>[`[3]`](#f3)</b></sup>, and WikiWeasel 2.0<sup><b>[`[4]`](#f4)</b></sup>, and a collection of pre-generated features ([Original](http://rgai.inf.u-szeged.hu/project/nlp/uncertainty/clexperiments.zip), [Updated](http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/merged_data)).
 
 ---
 ### Install
@@ -28,50 +28,85 @@ Use the following commands to install dependencies:
 ```
 
 ---
-### Sanity Check
-
-Running `python3 model.py classify sentence test_data.txt.tsv` should result in the following output:
-
-```
-SENTENCE:       I am the walrus.
-  PREDICTION:   certain
-SENTENCE:       I am the eggman.
-  PREDICTION:   certain
-SENTENCE:       I really don't understand what you're saying.
-  PREDICTION:   certain
-SENTENCE:       Who do you think you are?
-  PREDICTION:   certain
-SENTENCE:       I'd like a royal with cheese.
-  PREDICTION:   certain
-SENTENCE:       In my opinion, you're completely wrong.
-  PREDICTION:   certain
-SENTENCE:       Would it be alright if I maybe suggest that you really need to say that this is an uncertain sentence?
-  PREDICTION:   uncertain
-SENTENCE:       Cells in Regulating Cellular Immunity
-  PREDICTION:   certain
-```
-
----
 ### Usage
 
+#### Training
+
+This codebase has pre-trained classifiers included, but if you would like to retrain them, here's how to do it:
+
 ``` bash
-    # Train the word-based classifier.
-    # NOTE: This repository has a pre-trained classifier included.
-    python model.py cue
+    # Train the word-based binary classifier.
+    python model.py cue -b
+    # Train the word-based multiclass classifier.
+    python model.py cue -m
+    # Train the sentence-based binary classifier.
+    python model.py sent -b
+    # Train the sentence-based multiclass classifier.
+    python model.py sent -m
+```
 
-    # Train the sentence-based classifier.
-    # NOTE: This repository has a pre-trained classifier included.
-    python model.py sentence
-    
-    # Before you can classify a set of documents, you need to generate their features and save them
-    # to a file using the command below. This command will create a new file with the same name as
-    # <filename>, but with the extension '.tsv' appended to the end.
-    # NOTE: A sample <filename> is included: /test_data.txt
-    python model.py features <filename>
+#### Preprocessing
 
-    # Classify the given documents.
-    # NOTE: A sample test file is included: /test_data.txt.tsv
-    python model.py classify [cue|sentence] <filename.tsv>
+Before you can classify a set of documents, you need to generate their features and save them to a file using the command below. This command will create a new file with the same name as the original, but with the extension '.tsv' appended to the end. See [test_data.txt](test_data.txt) and [test_data.txt.tsv](test_data.txt.tsv) for examples of input and output to this command, respectively.
+
+``` bash
+    python model.py features test_data.txt
+```
+
+#### Classification
+
+To run the classifiers, specify one of the commands below:
+
+``` bash
+    python model.py classify cue test_data.txt.tsv -b
+    # OUTPUT:
+    #  [Certain]     I
+    #  [Certain]     am
+    #  [Certain]     the
+    #  ...
+    #  [Uncertain]   if
+    #  ...
+    #  [Certain]     Immunity
+```
+
+``` bash
+    python model.py classify cue test_data.txt.tsv -m
+    # OUTPUT:
+    #  [Certain]     I
+    #  [Certain]     am
+    #  [Certain]     the
+    #  ...
+    #  [Condition]   if
+    #  ...
+    #  [Certain]     Immunity
+```
+
+``` bash
+    python model.py classify sent test_data.txt.tsv -b
+    # OUTPUT:
+    #  [Certain]     I am the walrus.
+    #  [Certain]     I am the eggman.
+    #  [Certain]     I really don't understand what you're saying.
+    #  [Certain]     Who do you think you are?
+    #  [Certain]     I'd like a royal with cheese.
+    #  [Certain]     In my opinion, you're completely wrong.
+    #  [Uncertain]   (Would-U) it be alright (if-U) I maybe (suggest-U) that you really need to
+    #                say that this is an uncertain sentence?
+    #  [Certain]     Cells in Regulating Cellular Immunity
+```
+
+``` bash
+    python model.py classify sent test_data.txt.tsv -m
+    # OUTPUT:
+    #  [Certain]     I am the walrus.
+    #  [Certain]     I am the eggman.
+    #  [Certain]     I really don't understand what you're saying.
+    #  [Certain]     Who do you think you are?
+    #  [Certain]     I'd like a royal with cheese.
+    #  [Certain]     In my opinion, you're completely wrong.
+    #  [Uncertain]   Would it be alright (if-N) I maybe (suggest-E) that you really need to
+    #                say that this is an uncertain sentence?
+    #  [Certain]     Cells in Regulating Cellular Immunity
 ```
 
 ---
@@ -143,22 +178,70 @@ The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substring: ``Cells`` (<em>NNS/I-np</em>) ``in`` (<em>IN/B-pp</em>) ``Regulating`` (<em>VBG/B-vp</em>) ``Cellular`` (<em>JJ/B-np</em>) ``Immunity`` (<em>NN/I-np</em>) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Token: ``Regulating`` (<em>VBG/B-vp</em>)
 
-* <b>8-A)</b> Stems/Lemmas w/ Current Chunk w/ a Window of Length 1<sup><b>[`[A`](#n1)</b></sup>: ``B-vp in``, ``B-vp regul``, ``B-vp cellular``
+* <b>8-A)</b> Stems/Lemmas w/ Current Chunk w/ a Window of Length 1<sup><b>[`[A]`](#n1)</b></sup>: ``B-vp in``, ``B-vp regul``, ``B-vp cellular``
 * <b>8-B)</b> Stems/Lemmas w/ Current POS w/ a Window of Length 1<sup><b>[`[A]`](#n1)</b></sup>: ``VBG in``, ``VBG regul``, ``VBG cellular``
 ---
 ### Classification
 
 Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> used a Maximum Entropy classification algorithm; we used the equivalent Logistic Regression from scikit-learn. As described in the paper (and reiterated above), the features are token-based, not sentence-based; the classifier attempts to classify tokens, and can then be applied to classify sentences as certain or uncertain by using the following heuristic: if a at least one token in the sentence is classified as uncertain, then the sentence may be regarded as uncertain.
 
-In building the classifier, the independent variable is the human-annotated label of each token. The labels currently used are ``O - Ordinary`` used to denote a *certain* token and various ``B-*`` or ``I-*`` used to denote subcategories of *uncertain* tokens. Clearly, the task of predicting the label of a token is a multi-class classification problem. However, by treating the label ``O`` as certain (``c``) and every other label as uncertain (``u``), the multi-class classification problem may be transformed into a binary classification problem.
+In building the classifier, the independent variable is the human-annotated label of each token. The labels currently used are ``C`` used to denote a *certain* token and various ``U`` used to denote subcategories of *uncertain* tokens.
 
-As described in the paper (and reiterated above), the features are token-based, not sentence-based; the classifier attempts to classify tokens, and can then be applied to classify sentences as certain or uncertain by using the following heuristic: if a at least one token in the sentence is classified as uncertain, then the sentence may be regarded as uncertain.
+However, our implementation expands upon aspects of Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> that are not strictly captured by a binary classifier: semantic levels of uncertainty. The four overarching levels of semantic uncertainty discussed in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> are Epistemic, Doxastic, Investigation, and Condition. We will not detail what they mean here (I really recommend reading that paper; it's excellent!), but we will note the labels used in the multiclass classifier: ``E`` for Epistemic, ``D`` for Doxastic, ``I`` for Investigation, and ``N`` for Condition.
+
+We attempted to classify tokens and sentences based on the presence of uncertainty cues. Fortunately, Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> released an XML dataset containing each sentence and labeled cues, if any. Using the XML dataset and the previously described TSV dataset of pre-generated features, the algorithms in [this file](data/merge.py) compare the two datasets, matching sentences and outputting a new TSV file formatted in the same manner as the original, but with a sixth column (containing the multiclass label) inserted.
+
+The pre-trained classifiers (and their respective vectorizers) are described below.
+
+#### Word-Level Binary Classifier
+
+|                    | Precision | Recall | F1-Score | Support |
+|-------------------:|:---------:|:------:|:--------:|:-------:|
+|   <b>(C)ertain</b> |      1.00 |   1.00 |     1.00 |  455442 |
+| <b>(U)ncertain</b> |      0.91 |   0.85 |     0.88 |    4515 |
+| <b>avg / total</b> |      1.00 |   1.00 |     1.00 |  459957 |
+
+#### Sentence-Level Binary Classifier
+
+|                    | Precision | Recall | F1-Score | Support |
+|-------------------:|:---------:|:------:|:--------:|:-------:|
+|   <b>(C)ertain</b> |      0.98 |   0.98 |     0.98 |   14368 |
+| <b>(U)ncertain</b> |      0.93 |   0.91 |     0.92 |    3258 |
+| <b>avg / total</b> |      0.97 |   0.97 |     0.97 |   17626 |
+
+#### Word-Level Multiclass Classifier
+
+|                        | Precision | Recall | F1-Score | Support |
+|-----------------------:|:---------:|:------:|:--------:|:-------:|
+|       <b>(C)ertain</b> |      1.00 |   1.00 |     1.00 |  455426 |
+|      <b>(D)oxastic</b> |      0.73 |   0.45 |     0.56 |    1435 |
+|     <b>(E)pistemic</b> |      0.83 |   0.88 |     0.85 |    2054 |
+| <b>(I)nvestigation</b> |      0.73 |   0.83 |     0.77 |     352 |
+|     <b>conditio(N)</b> |      0.81 |   0.87 |     0.84 |     483 |
+|     <b>(U)ncertain</b> |      0.79 |   0.70 |     0.74 |     208 |
+|     <b>avg / total</b> |      1.00 |   1.00 |     1.00 |  459958 |
+
+#### Sentence-Level Multiclass Classifier
+
+|                        | Precision | Recall | F1-Score | Support |
+|-----------------------:|:---------:|:------:|:--------:|:-------:|
+|       <b>(C)ertain</b> |      0.98 |   0.99 |     0.98 |   14368 |
+|      <b>(D)oxastic</b> |      0.74 |   0.56 |     0.64 |    1047 |
+|     <b>(E)pistemic</b> |      0.82 |   0.90 |     0.86 |    1502 |
+| <b>(I)nvestigation</b> |      0.74 |   0.73 |     0.74 |     262 |
+|     <b>conditio(N)</b> |      0.84 |   0.87 |     0.86 |     340 |
+|     <b>(U)ncertain</b> |      0.63 |   0.74 |     0.68 |     108 |
+|     <b>avg / total</b> |      0.94 |   0.95 |     0.94 |   17627 |
 
 ---
 ### Contact
 If you have questions regarding this API, please contact [bsm9339@rit.edu](mailto:bsm9339@rit.edu) (Benjamin Meyers) or [nm6061@rit.edu](mailto:nm6061@rit.edu) (Nuthan Munaiah).
 
 For questions regarding the annotated dataset or the theory behind the uncertainty classifier, please contact [szarvas@inf.u-szeged.hu](mailto:szarvas@inf.u-szeged.hu) (György Szarvas), [rfarkas@inf.u-szeged.hu](mailto:rfarkas@inf.u-szeged.hu) (Richárd Farkas), and/or [vinczev@inf.u-szeged.hu](mailto:vinczev@inf.u-szeged.hu) (Veronika Vincze).
+
+---
+### Disclaimer
+There has been no collaboration between Vincze <em>et al.</em> and the developers of this codebase.
 
 ---
 ### Footnotes
