@@ -272,7 +272,7 @@ def classify(command, test_file, binary=True):
         preds = classifier.predict(X)
 
         _classification_report(z, preds, text="WORD:\t\t")
-        return z, preds
+        return z, list(preds)
     elif command == 'sent':
         X, y = Sentences(_get_sentences(test_file)).get_data(binary=binary)
 
