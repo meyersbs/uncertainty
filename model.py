@@ -23,6 +23,7 @@ from features.features import *
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
 #from scipy.sparse import csr_matrix
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="__main__")
@@ -76,179 +77,6 @@ def _get_worddata(sentences, binary=True):
         y.extend(y_)
     return X, y
 
-def _split_binary_data(X, y, test_size=0.25):
-    """
-    The sub-package sklearn.model_selection.train_test_split was not sufficient
-    to split the training data into training/testing groups; due to the
-    majority class (C) greatly outnumbering the secondary class (U), sklearn
-    almost always ended up splitting the data so that all samples of (U) were
-    in the training set and only samples of (C) were in the testing set.
-
-    This simple, yet verbose, function splits each class into training/testing
-    groups. The two training groups are merged together into one group that
-    contains 1-test_size percent of all of the data. Likewise, the two
-    testing groups are merged together into one group that contains test_size
-    percentage of the data.
-
-    This ensures comparable ratios of each class in the training and testing
-    sets, resulting in better classification models.
-    """
-    U, C = [], []
-    for a, b in zip(X, y):
-        if b == "C":
-            C.append([a, b])
-        else:
-            U.append([a, b])
-
-    X_train, X_test, y_train, y_test = [], [], [], []
-
-    shuffle(U)
-    shuffle(C)
-
-    train_size = float(1.0 - test_size)
-
-    U_train = U[0:int(len(U)*train_size)]
-    U_test = U[int(len(U)*train_size):]
-
-    C_train = C[0:int(len(C)*train_size)]
-    C_test = C[int(len(C)*train_size):]
-
-    for item in U_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in U_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    for item in C_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in C_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    return X_train, X_test, y_train, y_test
-
-def _split_multiclass_data(X, y, test_size=0.25):
-    """
-    The sub-package sklearn.model_selection.train_test_split was not sufficient
-    to split the training data into training/testing groups; due to the
-    majority class (C) greatly outnumbering the secondary classes (U, E, D, I,
-    N), sklearn almost always ended up splitting the data so that all samples
-    of (U, E, D, I, N) were in the training set and only samples of (C) were in
-    the testing set.
-
-    This simple, yet verbose, function splits each class into training/testing
-    groups. The six training groups are merged together into one group that
-    contains 1-test_size percent of all of the data. Likewise, the six
-    testing groups are merged together into one group that contains test_size
-    percentage of the data.
-
-    This ensures comparable ratios of each class in the training and testing
-    sets, resulting in better classification models.
-    """
-    U, C, E, I, D, N = [], [], [], [], [], []
-    #TODO: Clean up this code to reduce redundant for-loops.
-    for a, b in zip(X, y):
-        if b == "C":
-            C.append([a, b])
-        elif b == "U":
-            U.append([a, b])
-        elif b == "E":
-            E.append([a, b])
-        elif b == "I":
-            I.append([a, b])
-        elif b == "D":
-            D.append([a, b])
-        elif b == "N":
-            N.append([a, b])
-
-    X_train, X_test, y_train, y_test = [], [], [], []
-
-    shuffle(C)
-    shuffle(U)
-    shuffle(E)
-    shuffle(I)
-    shuffle(D)
-    shuffle(N)
-
-    train_size = float(1.0 - test_size)
-
-    C_train = C[0:int(len(C)*train_size)]
-    C_test = C[int(len(C)*train_size):]
-
-    U_train = U[0:int(len(U)*train_size)]
-    U_test = U[int(len(U)*train_size):]
-
-    E_train = E[0:int(len(E)*train_size)]
-    E_test = E[int(len(E)*train_size):]
-
-    I_train = I[0:int(len(I)*train_size)]
-    I_test = I[int(len(I)*train_size):]
-
-    D_train = D[0:int(len(D)*train_size)]
-    D_test = D[int(len(D)*train_size):]
-
-    N_train = N[0:int(len(N)*train_size)]
-    N_test = N[int(len(N)*train_size):]
-
-    for item in C_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in C_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    for item in U_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in U_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    for item in E_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in E_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    for item in I_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in I_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    for item in D_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in D_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    for item in N_train:
-        X_train.append(item[0])
-        y_train.append(item[1])
-
-    for item in N_test:
-        X_test.append(item[0])
-        y_test.append(item[1])
-
-    return X_train, X_test, y_train, y_test
-
-def _split_data(X, y, test_size=0.25, binary=True):
-    if binary:
-        return _split_binary_data(X, y, test_size=test_size)
-    else:
-        return _split_multiclass_data(X, y, test_size=test_size)
 
 ################################################################################
 #### CLASSIFICATION FUNCTIONS ##################################################
@@ -366,7 +194,9 @@ def cue(data=DATA_FILE, binary=True):
     X, y, _ = Words(_get_lines(data)).get_data(binary=binary)
 
     print("Splitting Train/Test Groups...")
-    X_train, X_test, y_train, y_test = _split_data(X, y, test_size=0.25, binary=binary)
+    X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.25, stratify=y
+        )
 
     print("Generating Feature Vectors...")
     vectorizer = DictVectorizer()
@@ -407,7 +237,9 @@ def sentence(data=DATA_FILE, binary=True):
     X, y = Sentences(_get_sentences(data)).get_data(binary=binary)
 
     print("Splitting Train/Test Groups...")
-    s_train, s_test, g_train, g_test = _split_data(X, y, test_size=0.25, binary=binary)
+    s_train, s_test, g_train, g_test = train_test_split(
+                X, y, test_size=0.25, stratify=y
+        )
 
     print("Parsing Words...")
     X_train, y_train = _get_worddata(s_train, binary=binary)
