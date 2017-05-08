@@ -265,7 +265,7 @@ def sentence(data=DATA_FILE, binary=True):
     for sentence in s_test:
         X_test, _, _ = sentence.words.get_data(binary=binary)
         X_test = vectorizer.transform(X_test)
-        y_pred.append(_classify_sentence(classifier, X_test, binary=binary))
+        y_pred.append(_classify_sentence(classifier, X_test, binary=binary)[0])
 
     _show_performance(g_test, y_pred, binary=binary)
 
