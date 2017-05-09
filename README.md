@@ -206,32 +206,32 @@ The pre-trained classifiers (and their respective vectorizers) are described bel
 |                    | Precision | Recall | F1-Score | Support |
 |-------------------:|:---------:|:------:|:--------:|:-------:|
 |   <b>(C)ertain</b> |      0.98 |   0.98 |     0.98 |   14368 |
-| <b>(U)ncertain</b> |      0.93 |   0.91 |     0.92 |    3258 |
-| <b>avg / total</b> |      0.97 |   0.97 |     0.97 |   17626 |
+| <b>(U)ncertain</b> |      0.92 |   0.90 |     0.91 |    3257 |
+| <b>avg / total</b> |      0.97 |   0.97 |     0.97 |   17625 |
 
 #### Word-Level Multiclass Classifier
 
 |                        | Precision | Recall | F1-Score | Support |
 |-----------------------:|:---------:|:------:|:--------:|:-------:|
 |       <b>(C)ertain</b> |      1.00 |   1.00 |     1.00 |  455426 |
-|      <b>(D)oxastic</b> |      0.73 |   0.45 |     0.56 |    1435 |
-|     <b>(E)pistemic</b> |      0.83 |   0.88 |     0.85 |    2054 |
-| <b>(I)nvestigation</b> |      0.73 |   0.83 |     0.77 |     352 |
-|     <b>conditio(N)</b> |      0.81 |   0.87 |     0.84 |     483 |
-|     <b>(U)ncertain</b> |      0.79 |   0.70 |     0.74 |     208 |
-|     <b>avg / total</b> |      1.00 |   1.00 |     1.00 |  459958 |
+|      <b>(D)oxastic</b> |      0.76 |   0.80 |     0.78 |     352 |
+|     <b>(E)pistemic</b> |      0.82 |   0.89 |     0.85 |    2053 |
+| <b>(I)nvestigation</b> |      0.85 |   0.88 |     0.86 |     483 |
+|     <b>conditio(N)</b> |      0.71 |   0.68 |     0.69 |     208 |
+|     <b>(U)ncertain</b> |      0.73 |   0.45 |     0.56 |    1435 |
+|     <b>avg / total</b> |      1.00 |   1.00 |     1.00 |  459957 |
 
 #### Sentence-Level Multiclass Classifier
 
 |                        | Precision | Recall | F1-Score | Support |
 |-----------------------:|:---------:|:------:|:--------:|:-------:|
-|       <b>(C)ertain</b> |      0.98 |   0.99 |     0.98 |   14368 |
-|      <b>(D)oxastic</b> |      0.74 |   0.56 |     0.64 |    1047 |
-|     <b>(E)pistemic</b> |      0.82 |   0.90 |     0.86 |    1502 |
-| <b>(I)nvestigation</b> |      0.74 |   0.73 |     0.74 |     262 |
-|     <b>conditio(N)</b> |      0.84 |   0.87 |     0.86 |     340 |
-|     <b>(U)ncertain</b> |      0.63 |   0.74 |     0.68 |     108 |
-|     <b>avg / total</b> |      0.94 |   0.95 |     0.94 |   17627 |
+|       <b>(C)ertain</b> |      0.98 |   0.99 |     0.98 |   14367 |
+|      <b>(D)oxastic</b> |      0.70 |   0.78 |     0.74 |     262 |
+|     <b>(E)pistemic</b> |      0.82 |   0.89 |     0.85 |    1502 |
+| <b>(I)nvestigation</b> |      0.83 |   0.88 |     0.85 |     340 |
+|     <b>conditio(N)</b> |      0.76 |   0.78 |     0.77 |     107 |
+|     <b>(U)ncertain</b> |      0.75 |   0.56 |     0.64 |    1047 |
+|     <b>avg / total</b> |      0.94 |   0.95 |     0.94 |   17625 |
 
 ---
 ### Contact
