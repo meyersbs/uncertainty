@@ -30,14 +30,14 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="__main__")
 
 DATA_FILE = 'data/merged_data'
 
-BIN_CUE_MODEL = "binary-cue-model.p"
-BIN_CUE_VECTORIZER = "binary-cue-vectorizer.p"
-BIN_SENT_MODEL = "binary-sent-model.p"
-BIN_SENT_VECTORIZER = "binary-sent-vectorizer.p"
-MULTI_CUE_MODEL = "multiclass-cue-model.p"
-MULTI_CUE_VECTORIZER = "multiclass-cue-vectorizer.p"
-MULTI_SENT_MODEL = "multiclass-sent-model.p"
-MULTI_SENT_VECTORIZER = "multiclass-sent-vectorizer.p"
+BIN_CUE_MODEL = "models/binary-cue-model.p"
+BIN_CUE_VECTORIZER = "vectorizers/binary-cue-vectorizer.p"
+BIN_SENT_MODEL = "models/binary-sent-model.p"
+BIN_SENT_VECTORIZER = "vectorizers/binary-sent-vectorizer.p"
+MULTI_CUE_MODEL = "models/multiclass-cue-model.p"
+MULTI_CUE_VECTORIZER = "vectorizers/multiclass-cue-vectorizer.p"
+MULTI_SENT_MODEL = "models/multiclass-sent-model.p"
+MULTI_SENT_VECTORIZER = "vectorizers/multiclass-sent-vectorizer.p"
 
 PRINTER = pprint.PrettyPrinter(indent=4)
 STEMMER = PorterStemmer()
