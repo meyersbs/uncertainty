@@ -1,6 +1,6 @@
 import csv
 import json
-import _pickle
+import pickle
 import numpy as np
 import os
 import pprint
@@ -87,15 +87,15 @@ def classify(command, test_file, binary=True):
         X, y, z = Words(_get_lines(test_file)).get_data(binary=binary)
 
         if binary:
-            vectorizer = _pickle.load(open(BIN_CUE_VECTORIZER, 'rb'))
+            vectorizer = pickle.load(open(BIN_CUE_VECTORIZER, 'rb'))
             X = vectorizer.transform(X)
 
-            classifier = _pickle.load(open(BIN_CUE_MODEL, 'rb'))
+            classifier = pickle.load(open(BIN_CUE_MODEL, 'rb'))
         else:
-            vectorizer = _pickle.load(open(MULTI_CUE_VECTORIZER, 'rb'))
+            vectorizer = pickle.load(open(MULTI_CUE_VECTORIZER, 'rb'))
             X = vectorizer.transform(X)
 
-            classifier = _pickle.load(open(MULTI_CUE_MODEL, 'rb'))
+            classifier = pickle.load(open(MULTI_CUE_MODEL, 'rb'))
 
         preds = classifier.predict(X)
 
@@ -105,11 +105,11 @@ def classify(command, test_file, binary=True):
         X, y = Sentences(_get_sentences(test_file)).get_data(binary=binary)
 
         if binary:
-            vectorizer = _pickle.load(open(BIN_SENT_VECTORIZER, 'rb'))
-            classifier = _pickle.load(open(BIN_SENT_MODEL, 'rb'))
+            vectorizer = pickle.load(open(BIN_SENT_VECTORIZER, 'rb'))
+            classifier = pickle.load(open(BIN_SENT_MODEL, 'rb'))
         else:
-            vectorizer = _pickle.load(open(MULTI_SENT_VECTORIZER, 'rb'))
-            classifier = _pickle.load(open(MULTI_SENT_MODEL, 'rb'))
+            vectorizer = pickle.load(open(MULTI_SENT_VECTORIZER, 'rb'))
+            classifier = pickle.load(open(MULTI_SENT_MODEL, 'rb'))
 
 
         preds, sents = list(), list()
@@ -221,14 +221,14 @@ def cue(data=DATA_FILE, binary=True):
 
     if binary:
         print("Dumping Classifier to Disk...")
-        _pickle.dump(classifier, open(BIN_CUE_MODEL, 'wb'))
+        pickle.dump(classifier, open(BIN_CUE_MODEL, 'wb'))
         print("Dumping Vectorizer to Disk...")
-        _pickle.dump(vectorizer, open(BIN_CUE_VECTORIZER, 'wb'))
+        pickle.dump(vectorizer, open(BIN_CUE_VECTORIZER, 'wb'))
     else:
         print("Dumping Classifier to Disk...")
-        _pickle.dump(classifier, open(MULTI_CUE_MODEL, 'wb'))
+        pickle.dump(classifier, open(MULTI_CUE_MODEL, 'wb'))
         print("Dumping Vectorizer to Disk...")
-        _pickle.dump(vectorizer, open(MULTI_CUE_VECTORIZER, 'wb'))
+        pickle.dump(vectorizer, open(MULTI_CUE_VECTORIZER, 'wb'))
 
     print("Cleaning Up...")
 
@@ -265,20 +265,20 @@ def sentence(data=DATA_FILE, binary=True):
     for sentence in s_test:
         X_test, _, _ = sentence.words.get_data(binary=binary)
         X_test = vectorizer.transform(X_test)
-        y_pred.append(_classify_sentence(classifier, X_test, binary=binary)[0])
 
+        y_pred.append(_classify_sentence(classifier, X_test, binary=binary)[0])
     _show_performance(g_test, y_pred, binary=binary)
 
     if binary:
         print("Dumping Classifier to Disk...")
-        _pickle.dump(classifier, open(BIN_SENT_MODEL, 'wb'))
+        pickle.dump(classifier, open(BIN_SENT_MODEL, 'wb'))
         print("Dumping Vectorizer to Disk...")
-        _pickle.dump(vectorizer, open(BIN_SENT_VECTORIZER, 'wb'))
+        pickle.dump(vectorizer, open(BIN_SENT_VECTORIZER, 'wb'))
     else:
         print("Dumping Classifier to Disk...")
-        _pickle.dump(classifier, open(MULTI_SENT_MODEL, 'wb'))
+        pickle.dump(classifier, open(MULTI_SENT_MODEL, 'wb'))
         print("Dumping Vectorizer to Disk...")
-        _pickle.dump(vectorizer, open(MULTI_SENT_VECTORIZER, 'wb'))
+        pickle.dump(vectorizer, open(MULTI_SENT_VECTORIZER, 'wb'))
 
     print("Cleaning Up...")
 
