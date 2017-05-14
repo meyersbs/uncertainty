@@ -84,7 +84,8 @@ def _get_worddata(sentences, binary=True):
 
 def classify(command, test_file, binary=True):
     if command == 'cue':
-        X, y, z = Words(_get_lines(test_file)).get_data(binary=binary)
+        words = Words.from_lines(_get_lines(test_file))
+        X, y, z = words.get_data(binary=binary)
 
         if binary:
             vectorizer = pickle.load(open(BIN_CUE_VECTORIZER, 'rb'))
@@ -102,7 +103,8 @@ def classify(command, test_file, binary=True):
         _classification_report(z, preds, text="WORD:\t\t")
         return z, list(preds)
     elif command == 'sent':
-        X, y = Sentences(_get_sentences(test_file)).get_data(binary=binary)
+        sentences = Sentences.from_lineslist(_get_sentences(test_file))
+        X, y = sentences.get_data(binary=binary)
 
         if binary:
             vectorizer = pickle.load(open(BIN_SENT_VECTORIZER, 'rb'))
@@ -124,7 +126,7 @@ def classify(command, test_file, binary=True):
         return sents, preds
 
 def _tag_sent(sent, labels):
-    sent = sent.get_sent().split()
+    sent = sent.get_sentence().split()
 
     tagged_sent = []
     for word, label in zip(sent, labels):
@@ -191,7 +193,8 @@ def _pca(X, y):
 
 def cue(data=DATA_FILE, binary=True):
     print("Gathering Documents...")
-    X, y, _ = Words(_get_lines(data)).get_data(binary=binary)
+    words = Words.from_lines(_get_lines(data))
+    X, y, _ = words.get_data(binary=binary)
 
     print("Splitting Train/Test Groups...")
     X_train, X_test, y_train, y_test = train_test_split(
@@ -234,7 +237,8 @@ def cue(data=DATA_FILE, binary=True):
 
 def sentence(data=DATA_FILE, binary=True):
     print("Gathering Documents...")
-    X, y = Sentences(_get_sentences(data)).get_data(binary=binary)
+    sentences = Sentences.from_lineslist(_get_sentences(data))
+    X, y = sentences.get_data(binary=binary)
 
     print("Splitting Train/Test Groups...")
     s_train, s_test, g_train, g_test = train_test_split(

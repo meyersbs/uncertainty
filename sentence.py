@@ -4,18 +4,23 @@ __all__ = ['Sentence', 'Sentences']
 
 
 class Sentence(object):
-    def __init__(self, lines):
-        self.sent = []
-        self.words = Words(lines)
+    @classmethod
+    def from_lines(cls, lines):
+        instance = cls()
 
-        for word in self.words.words:
-            self.sent.append(word.word)
+        instance.words = Words.from_lines(lines)
+
+        instance.sentence = list()
+        for word in instance.words.words:
+            instance.sentence.append(word.word)
+
+        return instance
 
     def get_words(self):
         return self.words.get_words()
 
-    def get_sent(self):
-        return " ".join(self.sent)
+    def get_sentence(self):
+        return " ".join(self.sentence)
 
     def get_features(self):
         return self.words.get_features()
@@ -37,8 +42,10 @@ class Sentence(object):
                 else:
                     labs[label] += 1
 
-            if (labs["U"] != 0 or labs["E"] != 0 or labs["I"] != 0 or
-                labs["D"] != 0 or labs["N"] != 0):
+            if (
+                    labs["U"] != 0 or labs["E"] != 0 or labs["I"] != 0 or
+                    labs["D"] != 0 or labs["N"] != 0
+            ):
 
                 labs.pop("C", None)
                 max_val = max(labs.values())
@@ -56,10 +63,15 @@ class Sentence(object):
 
 
 class Sentences(object):
-    def __init__(self, lines):
-        self.sentences = list()
-        for item in lines:
-            self.sentences.append(Sentence(item))
+    @classmethod
+    def from_lineslist(cls, lineslist):
+        instance = cls()
+
+        instance.sentences = list()
+        for lines in lineslist:
+            instance.sentences.append(Sentence.from_lines(lines))
+
+        return instance
 
     def get_data(self, binary=True):
         X, y = list(), list()

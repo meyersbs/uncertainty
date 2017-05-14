@@ -2,6 +2,7 @@ import csv
 import json
 import traceback
 import re
+import sys
 import warnings
 
 from sentence import *
@@ -19,7 +20,7 @@ def _clean_sent(sent):
     actual sentence, and runs three regex substitutions to clean up the
     sentence for querying.
     """
-    s = re.sub(r'\s([\.,!?\)\]])', r'\1', sent.get_sent().lower())
+    s = re.sub(r'\s([\.,!?\)\]])', r'\1', sent.get_sentence().lower())
     s = re.sub(r'([\(\[])\s', r'\1', s)
     s = re.sub(r'(\s’[\ss])', r'’', s, re.UNICODE)
     return s
@@ -139,12 +140,11 @@ def merge_data(json_data, tagged_data):
 
         print("Found " + str(cnt) + " documents with uncertainty cues.")
 
-        sents = Sentences(_get_sentences(tagged_data))
+        sents = Sentences.from_lineslist(_get_sentences(tagged_data))
         X, y = sents.get_data()
 
         with open(tagged_data + ".new", "w", newline='') as tsvfile:
-            tsv_writer = csv.writer(tsvfile, delimiter='\t', quotechar='|',
-                                    quoting=csv.QUOTE_NONE, escapechar='|')
+            tsv_writer = csv.writer(tsvfile, delimiter='\t')
             for i, sent in enumerate(X):
                 s = _clean_sent(sent)
                 tags = {}
@@ -175,7 +175,7 @@ def merge_data(json_data, tagged_data):
                         prepend="00"
 
                     row = ['sent' + str(i) + "token" + prepend + str(j),
-                           str(word.word), str(word.stem), str(word.pos)]
+                           str(word.word), str(word.root), str(word.pos)]
 
                     row.append(word.binary_label) # Binary Label
                     row.append(word_labels[j]) # Multiclass Label
