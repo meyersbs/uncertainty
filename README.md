@@ -197,41 +197,41 @@ The pre-trained classifiers (and their respective vectorizers) are described bel
 
 |                    | Precision | Recall | F1-Score | Support |
 |-------------------:|:---------:|:------:|:--------:|:-------:|
-|   <b>(C)ertain</b> |      1.00 |   1.00 |     1.00 |  455442 |
-| <b>(U)ncertain</b> |      0.91 |   0.85 |     0.88 |    4515 |
-| <b>avg / total</b> |      1.00 |   1.00 |     1.00 |  459957 |
+|   <b>(C)ertain</b> |      1.00 |   1.00 |     1.00 |  263908 |
+| <b>(U)ncertain</b> |      0.91 |   0.83 |     0.87 |    3609 |
+| <b>avg / total</b> |      1.00 |   1.00 |     1.00 |  267517 |
 
 #### Sentence-Level Binary Classifier
 
 |                    | Precision | Recall | F1-Score | Support |
 |-------------------:|:---------:|:------:|:--------:|:-------:|
-|   <b>(C)ertain</b> |      0.98 |   0.98 |     0.98 |   14368 |
-| <b>(U)ncertain</b> |      0.92 |   0.90 |     0.91 |    3257 |
-| <b>avg / total</b> |      0.97 |   0.97 |     0.97 |   17625 |
+|   <b>(C)ertain</b> |      0.97 |   0.98 |     0.98 |    8627 |
+| <b>(U)ncertain</b> |      0.92 |   0.89 |     0.90 |    2211 |
+| <b>avg / total</b> |      0.96 |   0.96 |     0.96 |   10838 |
 
 #### Word-Level Multiclass Classifier
 
 |                        | Precision | Recall | F1-Score | Support |
 |-----------------------:|:---------:|:------:|:--------:|:-------:|
-|       <b>(C)ertain</b> |      1.00 |   1.00 |     1.00 |  455426 |
-|      <b>(D)oxastic</b> |      0.76 |   0.80 |     0.78 |     352 |
-|     <b>(E)pistemic</b> |      0.82 |   0.89 |     0.85 |    2053 |
-| <b>(I)nvestigation</b> |      0.85 |   0.88 |     0.86 |     483 |
-|     <b>conditio(N)</b> |      0.71 |   0.68 |     0.69 |     208 |
-|     <b>(U)ncertain</b> |      0.73 |   0.45 |     0.56 |    1435 |
-|     <b>avg / total</b> |      1.00 |   1.00 |     1.00 |  459957 |
+|       <b>(C)ertain</b> |      1.00 |   1.00 |     1.00 |  263901 |
+|      <b>(D)oxastic</b> |      0.65 |   0.68 |     0.66 |     229 |
+|     <b>(E)pistemic</b> |      0.70 |   0.72 |     0.71 |    1045 |
+| <b>(I)nvestigation</b> |      0.72 |   0.77 |     0.74 |     220 |
+|     <b>conditio(N)</b> |      0.49 |   0.33 |     0.39 |     126 |
+|     <b>(U)ncertain</b> |      0.84 |   0.65 |     0.73 |    1996 |
+|     <b>avg / total</b> |      0.99 |   0.99 |     0.99 |  267517 |
 
 #### Sentence-Level Multiclass Classifier
 
 |                        | Precision | Recall | F1-Score | Support |
 |-----------------------:|:---------:|:------:|:--------:|:-------:|
-|       <b>(C)ertain</b> |      0.98 |   0.99 |     0.98 |   14367 |
-|      <b>(D)oxastic</b> |      0.70 |   0.78 |     0.74 |     262 |
-|     <b>(E)pistemic</b> |      0.82 |   0.89 |     0.85 |    1502 |
-| <b>(I)nvestigation</b> |      0.83 |   0.88 |     0.85 |     340 |
-|     <b>conditio(N)</b> |      0.76 |   0.78 |     0.77 |     107 |
-|     <b>(U)ncertain</b> |      0.75 |   0.56 |     0.64 |    1047 |
-|     <b>avg / total</b> |      0.94 |   0.95 |     0.94 |   17625 |
+|       <b>(C)ertain</b> |      0.97 |   0.98 |     0.97 |    8627 |
+|      <b>(D)oxastic</b> |      0.65 |   0.54 |     0.59 |     179 |
+|     <b>(E)pistemic</b> |      0.72 |   0.82 |     0.76 |     775 |
+| <b>(I)nvestigation</b> |      0.71 |   0.71 |     0.71 |     156 |
+|     <b>conditio(N)</b> |      0.58 |   0.50 |     0.54 |      66 |
+|     <b>(U)ncertain</b> |      0.75 |   0.64 |     0.69 |    1035 |
+|     <b>avg / total</b> |      0.92 |   0.92 |     0.92 |   10838 |
 
 ---
 ### Contact
