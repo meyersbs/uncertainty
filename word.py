@@ -176,8 +176,8 @@ class Words(object):
     def get_data(self, binary=True):
         X, y, z = list(), list(), list()
         for word in self.words:
-            X.append(word.features)
-            y.append(word.binary_label if binary else word.multi_label)
+            X.append(word.get_features())
+            y.append(word.get_label(binary))
             z.append(word.word)
         return X, y, z
 
