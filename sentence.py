@@ -16,6 +16,18 @@ class Sentence(object):
 
         return instance
 
+    @classmethod
+    def from_groups(cls, groups):
+        instance = cls()
+
+        instance.words = Words.from_groups(groups)
+
+        instance.sentence = list()
+        for word in instance.words.words:
+            instance.sentence.append(word.word)
+
+        return instance
+
     def get_words(self):
         return self.words.get_words()
 
@@ -60,6 +72,10 @@ class Sentence(object):
                     return "U"
             else:
                 return "C"
+
+    def get_data(self, binary=True):
+        X, y, z = self.words.get_data(binary=True)
+        return X, y, z
 
 
 class Sentences(object):

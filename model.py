@@ -95,10 +95,14 @@ def _load(filepath):
 #### CLASSIFICATION FUNCTIONS ##################################################
 ################################################################################
 
-def classify(command, test_file, binary=True):
+def classify(data, command, binary=True):
+    if type(data) is str:
+        raise NotImplementedError('Text classification is not yet supported.')
+
+    groups = data
     if command == 'cue':
-        words = Words.from_lines(_get_lines(test_file))
-        X, y, z = words.get_data(binary=binary)
+        words = Words.from_groups(groups)
+        X, _, _ = words.get_data(binary=binary)
 
         if binary:
             vectorizer = _load(BIN_CUE_VECTORIZER)
@@ -111,13 +115,10 @@ def classify(command, test_file, binary=True):
 
             classifier = _load(MULTI_CUE_MODEL)
 
-        preds = classifier.predict(X)
-
-        _classification_report(z, preds, text="WORD:\t\t")
-        return z, list(preds)
+        return list(classifier.predict(X))
     elif command == 'sent':
-        sentences = Sentences.from_lineslist(_get_sentences(test_file))
-        X, y = sentences.get_data(binary=binary)
+        sentence = Sentence.from_groups(groups)
+        X, _, _ = sentence.get_data(binary=binary)
 
         if binary:
             vectorizer = _load(BIN_SENT_VECTORIZER)
@@ -126,17 +127,9 @@ def classify(command, test_file, binary=True):
             vectorizer = _load(MULTI_SENT_VECTORIZER)
             classifier = _load(MULTI_SENT_MODEL)
 
+        X = vectorizer.transform(X)
+        return _classify_sentence(classifier, X, binary=binary)[0]
 
-        preds, sents = list(), list()
-        for sent in X:
-            A, _, _ = sent.words.get_data(binary=binary)
-            A = vectorizer.transform(A)
-            cls = _classify_sentence(classifier, A, binary=binary)
-            preds.append(cls[0])
-            sents.append(_tag_sent(sent, cls[1]))
-
-        _classification_report(sents, preds)
-        return sents, preds
 
 def _tag_sent(sent, labels):
     sent = sent.get_sentence().split()
@@ -410,6 +403,6 @@ if __name__ == '__main__':
         merge(args[1], args[2])
     elif (len(args) == 4 and args[0] == 'classify'
           and args[1] in ['sent', 'cue'] and _exists(args[2])):
-        classify(args[1], args[2], _is_valid(args[3]))
+        classify(args[2], args[1], _is_valid(args[3]))
     else:
         _help()
