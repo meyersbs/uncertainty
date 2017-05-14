@@ -46,6 +46,13 @@ STEMMER = PorterStemmer()
 #### HELPER FUNCTIONS ##########################################################
 ################################################################################
 
+
+def _dump(obj, filepath):
+    print('Dumping Python object to {}'.format(filepath))
+    with open(filepath, 'wb') as file:
+        pickle.dump(obj, file)
+
+
 def _get_lines(filepath):
     """ Given a filepath, return a list of lines from within that file. """
     lines = None
@@ -78,6 +85,12 @@ def _get_worddata(sentences, binary=True):
     return X, y
 
 
+def _load(filepath):
+    print('Loading Python object from {}'.format(filepath))
+    with open(filepath, 'rb') as file:
+        return pickle.load(file)
+
+
 ################################################################################
 #### CLASSIFICATION FUNCTIONS ##################################################
 ################################################################################
@@ -88,15 +101,15 @@ def classify(command, test_file, binary=True):
         X, y, z = words.get_data(binary=binary)
 
         if binary:
-            vectorizer = pickle.load(open(BIN_CUE_VECTORIZER, 'rb'))
+            vectorizer = _load(BIN_CUE_VECTORIZER)
             X = vectorizer.transform(X)
 
-            classifier = pickle.load(open(BIN_CUE_MODEL, 'rb'))
+            classifier = _load(BIN_CUE_MODEL)
         else:
-            vectorizer = pickle.load(open(MULTI_CUE_VECTORIZER, 'rb'))
+            vectorizer = _load(MULTI_CUE_VECTORIZER)
             X = vectorizer.transform(X)
 
-            classifier = pickle.load(open(MULTI_CUE_MODEL, 'rb'))
+            classifier = _load(MULTI_CUE_MODEL)
 
         preds = classifier.predict(X)
 
@@ -107,11 +120,11 @@ def classify(command, test_file, binary=True):
         X, y = sentences.get_data(binary=binary)
 
         if binary:
-            vectorizer = pickle.load(open(BIN_SENT_VECTORIZER, 'rb'))
-            classifier = pickle.load(open(BIN_SENT_MODEL, 'rb'))
+            vectorizer = _load(BIN_SENT_VECTORIZER)
+            classifier = _load(BIN_SENT_MODEL)
         else:
-            vectorizer = pickle.load(open(MULTI_SENT_VECTORIZER, 'rb'))
-            classifier = pickle.load(open(MULTI_SENT_MODEL, 'rb'))
+            vectorizer = _load(MULTI_SENT_VECTORIZER)
+            classifier = _load(MULTI_SENT_MODEL)
 
 
         preds, sents = list(), list()
@@ -224,14 +237,14 @@ def cue(data=DATA_FILE, binary=True):
 
     if binary:
         print("Dumping Classifier to Disk...")
-        pickle.dump(classifier, open(BIN_CUE_MODEL, 'wb'))
+        _dump(classifier, BIN_CUE_MODEL)
         print("Dumping Vectorizer to Disk...")
-        pickle.dump(vectorizer, open(BIN_CUE_VECTORIZER, 'wb'))
+        _dump(vectorizer, BIN_CUE_VECTORIZER)
     else:
         print("Dumping Classifier to Disk...")
-        pickle.dump(classifier, open(MULTI_CUE_MODEL, 'wb'))
+        _dump(classifier, MULTI_CUE_MODEL)
         print("Dumping Vectorizer to Disk...")
-        pickle.dump(vectorizer, open(MULTI_CUE_VECTORIZER, 'wb'))
+        _dump(vectorizer, MULTI_CUE_VECTORIZER)
 
     print("Cleaning Up...")
 
@@ -275,14 +288,14 @@ def sentence(data=DATA_FILE, binary=True):
 
     if binary:
         print("Dumping Classifier to Disk...")
-        pickle.dump(classifier, open(BIN_SENT_MODEL, 'wb'))
+        _dump(classifier, BIN_SENT_MODEL)
         print("Dumping Vectorizer to Disk...")
-        pickle.dump(vectorizer, open(BIN_SENT_VECTORIZER, 'wb'))
+        _dump(vectorizer, BIN_SENT_VECTORIZER)
     else:
         print("Dumping Classifier to Disk...")
-        pickle.dump(classifier, open(MULTI_SENT_MODEL, 'wb'))
+        _dump(classifier, MULTI_SENT_MODEL)
         print("Dumping Vectorizer to Disk...")
-        pickle.dump(vectorizer, open(MULTI_SENT_VECTORIZER, 'wb'))
+        _dump(vectorizer, MULTI_SENT_VECTORIZER)
 
     print("Cleaning Up...")
 
@@ -380,6 +393,7 @@ def _is_valid(flag):
 
 def _exists(filename):
     return os.path.exists(filename)
+
 
 if __name__ == '__main__':
     args = sys.argv[1:]
