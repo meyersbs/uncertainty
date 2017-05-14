@@ -1,7 +1,7 @@
 import csv
 import re
 
-import helpers
+from . import helpers
 
 __all__ = ['Word', 'Words']
 

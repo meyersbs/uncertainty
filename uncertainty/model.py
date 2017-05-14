@@ -10,15 +10,15 @@ import sys
 import warnings
 
 from collections import Counter
-from data.merge import *
-from word import *
-from sentence import *
+from .data.merge import *
+from .word import *
+from .sentence import *
 
 #from matplotlib.mlab import PCA
 from nltk.stem.porter import *
 from random import shuffle
-from SuperChunker import *
-from features.features import *
+from .SuperChunker import *
+from .features.features import *
 
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -28,16 +28,16 @@ from sklearn.model_selection import train_test_split
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="__main__")
 
-DATA_FILE = 'data/merged_data'
+DATA_FILE = 'uncertainty/data/merged_data'
 
-BIN_CUE_MODEL = "models/binary-cue-model.p"
-BIN_CUE_VECTORIZER = "vectorizers/binary-cue-vectorizer.p"
-BIN_SENT_MODEL = "models/binary-sent-model.p"
-BIN_SENT_VECTORIZER = "vectorizers/binary-sent-vectorizer.p"
-MULTI_CUE_MODEL = "models/multiclass-cue-model.p"
-MULTI_CUE_VECTORIZER = "vectorizers/multiclass-cue-vectorizer.p"
-MULTI_SENT_MODEL = "models/multiclass-sent-model.p"
-MULTI_SENT_VECTORIZER = "vectorizers/multiclass-sent-vectorizer.p"
+BIN_CUE_MODEL = "uncertainty/models/binary-cue-model.p"
+BIN_CUE_VECTORIZER = "uncertainty/vectorizers/binary-cue-vectorizer.p"
+BIN_SENT_MODEL = "uncertainty/models/binary-sent-model.p"
+BIN_SENT_VECTORIZER = "uncertainty/vectorizers/binary-sent-vectorizer.p"
+MULTI_CUE_MODEL = "uncertainty/models/multiclass-cue-model.p"
+MULTI_CUE_VECTORIZER = "uncertainty/vectorizers/multiclass-cue-vectorizer.p"
+MULTI_SENT_MODEL = "uncertainty/models/multiclass-sent-model.p"
+MULTI_SENT_VECTORIZER = "uncertainty/vectorizers/multiclass-sent-vectorizer.p"
 
 PRINTER = pprint.PrettyPrinter(indent=4)
 STEMMER = PorterStemmer()

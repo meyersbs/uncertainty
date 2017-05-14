@@ -1,4 +1,4 @@
-from word import *
+from .word import *
 
 __all__ = ['Sentence', 'Sentences']
 

@@ -1,6 +1,6 @@
 import unittest
 
-from word import *
+from uncertainty.word import *
 
 
 class WordsTestCase(unittest.TestCase):

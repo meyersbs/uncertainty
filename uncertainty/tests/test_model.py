@@ -1,6 +1,6 @@
 import unittest
 
-import model
+from uncertainty import model
 
 
 class ModelTestCase(unittest.TestCase):

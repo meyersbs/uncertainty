@@ -3,7 +3,7 @@ import pprint
 import re
 import warnings
 
-from SuperChunker import *
+from ..SuperChunker import *
 
 from itertools import groupby
 from nltk import pos_tag

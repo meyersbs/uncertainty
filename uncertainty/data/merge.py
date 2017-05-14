@@ -5,8 +5,8 @@ import re
 import sys
 import warnings
 
-from sentence import *
-from word import *
+from ..sentence import *
+from ..word import *
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="__main__")
 

@@ -118,4 +118,4 @@ tags
 # End of https://www.gitignore.io/api/vim,python
 
 # Data Files
-data/merged_data
+uncertainty/data/merged_data
