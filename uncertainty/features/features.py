@@ -389,3 +389,36 @@ def get_features(sentence):
         feature_dict[prepend + str(i) + "_" + token].update(get_feature8B(sent_list, feats, i))
 
     return feature_dict
+
+
+def features(data_file):
+    """
+    This preprocessing function takes in a data_file containing one sentence
+    per line, generates the features for each token, and writes them to a file
+    with the same name and '.tsv' appended to the end. See the documents
+    /test_data.txt and /test_data.txt.tsv for examples of valid input and
+    output, respectively.
+
+    This preprocessing step allows for the features of a corpus to be generated
+    only once, greatly speeding up the classification process.
+
+    NOTE: The output file will be much larger in size than the input file.
+    """
+    with open(data_file, 'r') as f:
+        filename = data_file + '.tsv'
+        with open(filename, 'w', newline='') as tsvfile:
+            tsv_writer = csv.writer(tsvfile, delimiter='\t', quotechar='|',
+                                    quoting=csv.QUOTE_MINIMAL)
+            for i, line in enumerate(f.readlines()):
+                if line.strip() == '':
+                    tsv_writer.writerow('')
+                else:
+                    features = get_features(line)
+                    for key, val in sorted(features.items()):
+                        (tok_num, tok) = key.split("_")
+                        row = ['sent' + str(i) + "token" + str(tok_num),
+                               str(tok), str(STEMMER.stem(tok)).lower(),
+                               pos_tag(tok)[0][1], 'X', 'X']
+                        for k, v in sorted(val.items()):
+                            row.append(str(k) + ":" + str(v))
+                        tsv_writer.writerow(row)
