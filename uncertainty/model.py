@@ -4,6 +4,7 @@ import pickle
 import numpy as np
 import os
 import pprint
+import pkg_resources
 import re
 #import sklearn.decomposition as decomp
 import sys
@@ -29,14 +30,30 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="__main__")
 
 DATA_FILE = 'uncertainty/data/merged_data'
 
-BIN_CUE_MODEL = "uncertainty/models/binary-cue-model.p"
-BIN_CUE_VECTORIZER = "uncertainty/vectorizers/binary-cue-vectorizer.p"
-BIN_SENT_MODEL = "uncertainty/models/binary-sent-model.p"
-BIN_SENT_VECTORIZER = "uncertainty/vectorizers/binary-sent-vectorizer.p"
-MULTI_CUE_MODEL = "uncertainty/models/multiclass-cue-model.p"
-MULTI_CUE_VECTORIZER = "uncertainty/vectorizers/multiclass-cue-vectorizer.p"
-MULTI_SENT_MODEL = "uncertainty/models/multiclass-sent-model.p"
-MULTI_SENT_VECTORIZER = "uncertainty/vectorizers/multiclass-sent-vectorizer.p"
+BIN_CUE_MODEL = pkg_resources.resource_filename(
+        "uncertainty", "models/binary-cue-model.p"
+    )
+BIN_CUE_VECTORIZER = pkg_resources.resource_filename(
+        "uncertainty", "vectorizers/binary-cue-vectorizer.p"
+    )
+BIN_SENT_MODEL = pkg_resources.resource_filename(
+        "uncertainty", "models/binary-sent-model.p"
+    )
+BIN_SENT_VECTORIZER = pkg_resources.resource_filename(
+        "uncertainty", "vectorizers/binary-sent-vectorizer.p"
+    )
+MULTI_CUE_MODEL = pkg_resources.resource_filename(
+        "uncertainty", "models/multiclass-cue-model.p"
+    )
+MULTI_CUE_VECTORIZER = pkg_resources.resource_filename(
+        "uncertainty", "vectorizers/multiclass-cue-vectorizer.p"
+    )
+MULTI_SENT_MODEL = pkg_resources.resource_filename(
+        "uncertainty", "models/multiclass-sent-model.p"
+    )
+MULTI_SENT_VECTORIZER = pkg_resources.resource_filename(
+        "uncertainty", "vectorizers/multiclass-sent-vectorizer.p"
+    )
 
 PRINTER = pprint.PrettyPrinter(indent=4)
 STEMMER = PorterStemmer()
