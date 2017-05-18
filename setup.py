@@ -19,7 +19,7 @@ setup(
         author='Benjamin S. Meyers',
         author_email='bsm9339@rit.edu',
         url='https://github.com/meyersbs/uncertainty',
-        download_url='https://github.com/meyersbs/uncertainty/uncertainty/dist/uncertainty-0.1.0.tar.gz',
+        #download_url='https://github.com/meyersbs/uncertainty/uncertainty/dist/uncertainty-0.1.0.tar.gz',
         test_suite='uncertainty.tests',
         classifiers=[
             'Development Status :: 4 - Beta',
