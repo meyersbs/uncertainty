@@ -47,7 +47,7 @@ This codebase has pre-trained classifiers included, but if you would like to ret
 
 #### Preprocessing
 
-Before you can classify a set of documents, you need to generate their features and save them to a file using the command below. This command will create a new file with the same name as the original, but with the extension '.tsv' appended to the end. See [test_data.txt](test_data.txt) and [test_data.txt.tsv](test_data.txt.tsv) for examples of input and output to this command, respectively.
+Before you can classify a set of documents, you need to generate their features and save them to a file using the command below. This command will create a new file with the same name as the original, but with the extension '.tsv' appended to the end. See [test_data.txt](uncertainty/test_data.txt) and [test_data.txt.tsv](uncertainty/test_data.txt.tsv) for examples of input and output to this command, respectively.
 
 ``` bash
     python model.py features test_data.txt
@@ -183,15 +183,15 @@ The Chunk tags used in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> were
 ---
 ### Classification
 
-Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> used a Maximum Entropy classification algorithm; we used the equivalent Logistic Regression from scikit-learn. As described in the paper (and reiterated above), the features are token-based, not sentence-based; the classifier attempts to classify tokens, and can then be applied to classify sentences as certain or uncertain by using the following heuristic: if a at least one token in the sentence is classified as uncertain, then the sentence may be regarded as uncertain.
+Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> used a Maximum Entropy classification algorithm (linear confiditional random fields); we used the equivalent Logistic Regression from scikit-learn. As described in the paper (and reiterated above), the features are token-based, not sentence-based; the classifier attempts to classify tokens, and can then be applied to classify sentences as certain or uncertain by using the following heuristic: if a at least one token in the sentence is classified as uncertain, then the sentence may be regarded as uncertain.
 
 In building the classifier, the independent variable is the human-annotated label of each token. The labels currently used are ``C`` used to denote a *certain* token and various ``U`` used to denote subcategories of *uncertain* tokens.
 
 However, our implementation expands upon aspects of Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> that are not strictly captured by a binary classifier: semantic levels of uncertainty. The four overarching levels of semantic uncertainty discussed in Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> are Epistemic, Doxastic, Investigation, and Condition. We will not detail what they mean here (I really recommend reading that paper; it's excellent!), but we will note the labels used in the multiclass classifier: ``E`` for Epistemic, ``D`` for Doxastic, ``I`` for Investigation, and ``N`` for Condition.
 
-We attempted to classify tokens and sentences based on the presence of uncertainty cues. Fortunately, Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> released an XML dataset containing each sentence and labeled cues, if any. Using the XML dataset and the previously described TSV dataset of pre-generated features, the algorithms in [this file](data/merge.py) compare the two datasets, matching sentences and outputting a new TSV file formatted in the same manner as the original, but with a sixth column (containing the multiclass label) inserted.
+We attempted to classify tokens and sentences based on the presence of uncertainty cues. Fortunately, Vincze <em>et al.</em><sup><b>[`[1]`](#f1)</b></sup> released an XML dataset containing each sentence and labeled cues, if any. Using the XML dataset and the previously described TSV dataset of pre-generated features, the algorithms in [this file](uncertainty/data/merge.py) compare the two datasets, matching sentences and outputting a new TSV file formatted in the same manner as the original, but with a sixth column (containing the multiclass label) inserted.
 
-The pre-trained classifiers (and their respective vectorizers) are described below.
+### Performance
 
 #### Word-Level Binary Classifier
 
@@ -241,7 +241,10 @@ For questions regarding the annotated dataset or the theory behind the uncertain
 
 ---
 ### Disclaimer
-There has been no collaboration between Vincze <em>et al.</em> and the developers of this codebase.
+* There has been no collaboration between Vincze <em>et al.</em> and the developers of this codebase.
+* This work was overseen by two linguistics professors at the Rochester Institute of Technology:
+  * [Emily Prud'hommeaux](mailto:emilypx@rit.edu)
+  * [Cecilia O. Alm](mailto:coagla@rit.edu)
 
 ---
 ### Footnotes
