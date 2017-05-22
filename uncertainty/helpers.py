@@ -1,5 +1,6 @@
 import collections
 import itertools
+import pickle
 import re
 
 GREEK_LOWER = re.compile(u'[αβγδεζηθικλμξπρσςτυφψω]')
@@ -13,6 +14,11 @@ ROMAN_LOWER = re.compile(
 ROMAN_UPPER = re.compile(
         'M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})'
     )
+
+
+def dump(obj, filepath):
+    with open(filepath, 'wb') as file:
+        pickle.dump(obj, file)
 
 
 def get_context(index, elements, size=2):
@@ -56,3 +62,8 @@ def get_charpattern(character):
         return 'R'
     elif ROMAN_LOWER.search(character):
         return 'r'
+
+
+def load(filepath):
+    with open(filepath, 'rb') as file:
+        return pickle.load(file)

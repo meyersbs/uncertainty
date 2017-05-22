@@ -1,6 +1,5 @@
 import csv
 import json
-import pickle
 import numpy as np
 import os
 import pprint
@@ -11,6 +10,7 @@ import sys
 import warnings
 
 from collections import Counter
+from . import helpers
 from .data.merge import *
 from .word import *
 from .sentence import *
@@ -63,12 +63,6 @@ STEMMER = PorterStemmer()
 ################################################################################
 
 
-def _dump(obj, filepath):
-    print('Dumping Python object to {}'.format(filepath))
-    with open(filepath, 'wb') as file:
-        pickle.dump(obj, file)
-
-
 def _get_lines(filepath):
     """ Given a filepath, return a list of lines from within that file. """
     lines = None
@@ -101,12 +95,6 @@ def _get_worddata(sentences, binary=True):
     return X, y
 
 
-def _load(filepath):
-    print('Loading Python object from {}'.format(filepath))
-    with open(filepath, 'rb') as file:
-        return pickle.load(file)
-
-
 ################################################################################
 #### CLASSIFICATION FUNCTIONS ##################################################
 ################################################################################
@@ -121,15 +109,15 @@ def classify(data, command, binary=True):
         X, _, _ = words.get_data(binary=binary)
 
         if binary:
-            vectorizer = _load(BIN_CUE_VECTORIZER)
+            vectorizer = helpers.load(BIN_CUE_VECTORIZER)
             X = vectorizer.transform(X)
 
-            classifier = _load(BIN_CUE_MODEL)
+            classifier = helpers.load(BIN_CUE_MODEL)
         else:
-            vectorizer = _load(MULTI_CUE_VECTORIZER)
+            vectorizer = helpers.load(MULTI_CUE_VECTORIZER)
             X = vectorizer.transform(X)
 
-            classifier = _load(MULTI_CUE_MODEL)
+            classifier = helpers.load(MULTI_CUE_MODEL)
 
         return list(classifier.predict(X))
     elif command == 'sent':
@@ -137,11 +125,11 @@ def classify(data, command, binary=True):
         X, _, _ = sentence.get_data(binary=binary)
 
         if binary:
-            vectorizer = _load(BIN_SENT_VECTORIZER)
-            classifier = _load(BIN_SENT_MODEL)
+            vectorizer = helpers.load(BIN_SENT_VECTORIZER)
+            classifier = helpers.load(BIN_SENT_MODEL)
         else:
-            vectorizer = _load(MULTI_SENT_VECTORIZER)
-            classifier = _load(MULTI_SENT_MODEL)
+            vectorizer = helpers.load(MULTI_SENT_VECTORIZER)
+            classifier = helpers.load(MULTI_SENT_MODEL)
 
         X = vectorizer.transform(X)
         return _classify_sentence(classifier, X, binary=binary)[0]
@@ -246,14 +234,14 @@ def cue(data=DATA_FILE, binary=True):
 
     if binary:
         print("Dumping Classifier to Disk...")
-        _dump(classifier, BIN_CUE_MODEL)
+        helpers.dump(classifier, BIN_CUE_MODEL)
         print("Dumping Vectorizer to Disk...")
-        _dump(vectorizer, BIN_CUE_VECTORIZER)
+        helpers.dump(vectorizer, BIN_CUE_VECTORIZER)
     else:
         print("Dumping Classifier to Disk...")
-        _dump(classifier, MULTI_CUE_MODEL)
+        helpers.dump(classifier, MULTI_CUE_MODEL)
         print("Dumping Vectorizer to Disk...")
-        _dump(vectorizer, MULTI_CUE_VECTORIZER)
+        helpers.dump(vectorizer, MULTI_CUE_VECTORIZER)
 
     print("Cleaning Up...")
 
@@ -297,14 +285,14 @@ def sentence(data=DATA_FILE, binary=True):
 
     if binary:
         print("Dumping Classifier to Disk...")
-        _dump(classifier, BIN_SENT_MODEL)
+        helpers.dump(classifier, BIN_SENT_MODEL)
         print("Dumping Vectorizer to Disk...")
-        _dump(vectorizer, BIN_SENT_VECTORIZER)
+        helpers.dump(vectorizer, BIN_SENT_VECTORIZER)
     else:
         print("Dumping Classifier to Disk...")
-        _dump(classifier, MULTI_SENT_MODEL)
+        helpers.dump(classifier, MULTI_SENT_MODEL)
         print("Dumping Vectorizer to Disk...")
-        _dump(vectorizer, MULTI_SENT_VECTORIZER)
+        helpers.dump(vectorizer, MULTI_SENT_VECTORIZER)
 
     print("Cleaning Up...")
 
