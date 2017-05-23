@@ -1,5 +1,11 @@
 import pkg_resources
 
+from pkg_resources import resource_filename
+
+BCLASS_CLASSIFIER_PATH = resource_filename('uncertainty', 'models/bclass.p')
+MCLASS_CLASSIFIER_PATH = resource_filename('uncertainty', 'models/mclass.p')
+VECTORIZER_PATH = resource_filename('uncertainty', 'vectorizers/vectorizer.p')
+
 DATA_FILE_PATH = 'uncertainty/data/merged_data'
 BIN_CUE_MODEL_PATH = pkg_resources.resource_filename(
         'uncertainty', 'models/bclass.p'
