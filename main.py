@@ -4,9 +4,7 @@ from uncertainty.classifier import Classifier
 
 
 def train(args):
-    classifier = Classifier(
-            granularity=args.granularity, binary=not args.multiclass
-        )
+    classifier = Classifier(binary=not args.multiclass)
     classifier.train(args.filepath)
 
 
@@ -26,12 +24,6 @@ if __name__ == '__main__':
 
     parser_train = subparsers.add_parser(
             'train', help='Train uncertainty classifier.'
-        )
-    parser_train.add_argument(
-            '-g', '--granularity', choices=['word', 'sentence'],
-            default='word',
-            help='The granularity at which the classifier must be trained. '
-                 'Default is word.'
         )
     parser_train.add_argument(
             '-m', '--multiclass', action='store_true',
