@@ -1,7 +1,5 @@
 import argparse
 
-from uncertainty.classifier import Classifier
-
 
 def train(args):
     classifier = Classifier(binary=not args.multiclass)
@@ -20,7 +18,8 @@ if __name__ == '__main__':
             description='Command line access to the Linguistic Uncertainty '
                         'Classifier Interface (LUCI).'
         )
-    subparsers = parser.add_subparsers(title='Commands')
+    subparsers = parser.add_subparsers(title='Commands', dest='command')
+    subparsers.required = True
 
     parser_train = subparsers.add_parser(
             'train', help='Train uncertainty classifier.'
@@ -57,4 +56,6 @@ if __name__ == '__main__':
         )
     parser_predict.set_defaults(handler=predict)
     args = parser.parse_args()
+
+    from uncertainty.classifier import Classifier
     args.handler(args)
