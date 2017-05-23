@@ -1,17 +1,16 @@
 from urllib.request import urlretrieve
+from urllib.parse import urljoin
+
+DATASETS = ['abstracts', 'bmc', 'fly', 'hbc', 'news', 'wiki', 'merged_data']
+URL = 'http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/'
+
 
 def download():
-    print("Downloading preparsed datasets...")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/abstracts", "abstracts")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/allarticles", "allarticles")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/allbio", "allbio")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/bmc", "bmc")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/fly", "fly")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/hbc", "hbc")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/merged_data", "merged_data")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/news", "news")
-    urlretrieve("http://people.rc.rit.edu/~bsm9339/corpora/szeged_uncertainty/wiki", "wiki")
-    print("Finished!")
+    print('Download Training Data Files')
+    for (index, dataset) in enumerate(DATASETS):
+        url = urljoin(URL, dataset)
+        urlretrieve(url, dataset)
+        print('  [{}/{}] {}'.format(index + 1, len(DATASETS), dataset))
 
 if __name__ == "__main__":
     download()
