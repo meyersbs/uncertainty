@@ -3,9 +3,13 @@ from setuptools import setup
 setup(
         name='uncertainty',
         version='0.1.0',
-        packages=['uncertainty', 'uncertainty.data', 'uncertainty.features'],
+        packages=[
+            'uncertainty', 'uncertainty.data', 'uncertainty.lib',
+            'uncertainty.lib.nlp'
+        ],
         package_data={
-            'uncertainty': ['models/*.p', 'vectorizers/*.p']
+            'uncertainty': ['models/*.p', 'vectorizers/*.p'],
+            'uncertainty.lib.nlp': ['verbs.txt']
         },
         install_requires=[
             'numpy==1.12.1',
