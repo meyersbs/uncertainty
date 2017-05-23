@@ -6,6 +6,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
 
 from . import constants, helpers, word
+from .lib.nlp import summarizer
 
 
 class Classifier(object):
@@ -38,13 +39,14 @@ class Classifier(object):
         self._dump()
 
     def predict(self, data):
-        if type(data) is str:
-            raise NotImplementedError('Text classification not yet supported.')
-
         if self.classifier is None or self.vectorizer is None:
             self._load()
 
-        groups = data
+        groups = None
+        if type(data) is str:
+            groups = summarizer.Summarizer(data).execute()
+        else:
+            groups = data
         words = word.Words.from_groups(groups)
         X, _, _ = words.get_data(binary=self.binary)
         X = self.vectorizer.transform(X)
