@@ -12,4 +12,4 @@ class Summarizer(object):
         chunk = chunktagger.ChunkTagger().parse(pos)
 
         summary = zip(tokens, stems, pos, chunk)
-        return summary
+        return [(t, s, p[1], c[1]) for (t, s, p, c) in summary]
