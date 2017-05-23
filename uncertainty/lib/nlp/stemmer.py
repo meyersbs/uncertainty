@@ -1,13 +1,9 @@
-"""
-@AUTHOR: nuthanmunaiah
-"""
-
 import nltk
 
 
 class Stemmer(object):
     """
-    Given a list of tokens, return a list of stems associated with those tokens.
+    Given a list of tokens, return a list of stems associated with those tokens
     """
     def __init__(self, tokens):
         """ Constructor. """
@@ -19,5 +15,4 @@ class Stemmer(object):
         Given a list of tokens, return a list of stems associated with those
         tokens.
         """
-        return [self.stemmer.stem(token) for token in self.tokens]
-
+        return [self.stemmer.stem(token).lower() for token in self.tokens]
