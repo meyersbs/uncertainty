@@ -1,5 +1,3 @@
-import os
+from pkg_resources import resource_filename
 
-VERBS_PATH = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'verbs.txt'
-    )
+VERBS_PATH = resource_filename('uncertainty.lib.nlp', 'verbs.txt')
