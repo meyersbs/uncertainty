@@ -1,4 +1,5 @@
 import collections
+import csv
 import itertools
 import operator
 import os
@@ -85,6 +86,27 @@ def get_charpattern(character):
         return 'R'
     elif ROMAN_LOWER.search(character):
         return 'r'
+
+
+def get_verbs(filepath):
+    """
+    Return the contents of verbs file pointed to by the filepath argument as a
+    dictionary in which the key is the conjugate of a verb and the value is
+    uninflected verb form of the conjugate verb.
+
+    For example, {'scolded': 'scold', 'scolding': 'scold'}
+
+    Adapted from code provided in NodeBox:
+    https://www.nodebox.net/code/index.php/Linguistics#verb_conjugation
+    """
+    verbs = dict()
+    with open(filepath) as file:
+        reader = csv.reader(file)
+        for row in reader:
+            for verb in row[1:]:
+                verbs[verb] = row[0]
+
+    return verbs
 
 
 def load(filepath):
