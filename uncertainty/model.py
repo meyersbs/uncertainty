@@ -3,7 +3,6 @@ import json
 import numpy as np
 import os
 import pprint
-import pkg_resources
 import re
 #import sklearn.decomposition as decomp
 import sys
@@ -11,6 +10,7 @@ import warnings
 
 from collections import Counter
 from . import helpers
+from .constants import *
 from .data.merge import *
 from .word import *
 from .sentence import *
@@ -27,33 +27,6 @@ from sklearn.model_selection import train_test_split
 #from scipy.sparse import csr_matrix
 
 warnings.filterwarnings("ignore", category=FutureWarning, module="__main__")
-
-DATA_FILE = 'uncertainty/data/merged_data'
-
-BIN_CUE_MODEL = pkg_resources.resource_filename(
-        "uncertainty", "models/binary-cue-model.p"
-    )
-BIN_CUE_VECTORIZER = pkg_resources.resource_filename(
-        "uncertainty", "vectorizers/binary-cue-vectorizer.p"
-    )
-BIN_SENT_MODEL = pkg_resources.resource_filename(
-        "uncertainty", "models/binary-sent-model.p"
-    )
-BIN_SENT_VECTORIZER = pkg_resources.resource_filename(
-        "uncertainty", "vectorizers/binary-sent-vectorizer.p"
-    )
-MULTI_CUE_MODEL = pkg_resources.resource_filename(
-        "uncertainty", "models/multiclass-cue-model.p"
-    )
-MULTI_CUE_VECTORIZER = pkg_resources.resource_filename(
-        "uncertainty", "vectorizers/multiclass-cue-vectorizer.p"
-    )
-MULTI_SENT_MODEL = pkg_resources.resource_filename(
-        "uncertainty", "models/multiclass-sent-model.p"
-    )
-MULTI_SENT_VECTORIZER = pkg_resources.resource_filename(
-        "uncertainty", "vectorizers/multiclass-sent-vectorizer.p"
-    )
 
 PRINTER = pprint.PrettyPrinter(indent=4)
 STEMMER = PorterStemmer()
@@ -109,15 +82,15 @@ def classify(data, command, binary=True):
         X, _, _ = words.get_data(binary=binary)
 
         if binary:
-            vectorizer = helpers.load(BIN_CUE_VECTORIZER)
+            vectorizer = helpers.load(BIN_CUE_VECTORIZER_PATH)
             X = vectorizer.transform(X)
 
-            classifier = helpers.load(BIN_CUE_MODEL)
+            classifier = helpers.load(BIN_CUE_MODEL_PATH)
         else:
-            vectorizer = helpers.load(MULTI_CUE_VECTORIZER)
+            vectorizer = helpers.load(MULTI_CUE_VECTORIZER_PATH)
             X = vectorizer.transform(X)
 
-            classifier = helpers.load(MULTI_CUE_MODEL)
+            classifier = helpers.load(MULTI_CUE_MODEL_PATH)
 
         return list(classifier.predict(X))
     elif command == 'sent':
@@ -125,11 +98,11 @@ def classify(data, command, binary=True):
         X, _, _ = sentence.get_data(binary=binary)
 
         if binary:
-            vectorizer = helpers.load(BIN_SENT_VECTORIZER)
-            classifier = helpers.load(BIN_SENT_MODEL)
+            vectorizer = helpers.load(BIN_SENT_VECTORIZER_PATH)
+            classifier = helpers.load(BIN_SENT_MODEL_PATH)
         else:
-            vectorizer = helpers.load(MULTI_SENT_VECTORIZER)
-            classifier = helpers.load(MULTI_SENT_MODEL)
+            vectorizer = helpers.load(MULTI_SENT_VECTORIZER_PATH)
+            classifier = helpers.load(MULTI_SENT_MODEL_PATH)
 
         X = vectorizer.transform(X)
         return _classify_sentence(classifier, X, binary=binary)[0]
@@ -201,7 +174,7 @@ def _pca(X, y):
 #### TRAINING FUNCTIONS ########################################################
 ################################################################################
 
-def cue(data=DATA_FILE, binary=True):
+def cue(data=DATA_FILE_PATH, binary=True):
     print("Gathering Documents...")
     words = Words.from_lines(_get_lines(data))
     X, y, _ = words.get_data(binary=binary)
@@ -234,18 +207,18 @@ def cue(data=DATA_FILE, binary=True):
 
     if binary:
         print("Dumping Classifier to Disk...")
-        helpers.dump(classifier, BIN_CUE_MODEL)
+        helpers.dump(classifier, BIN_CUE_MODEL_PATH)
         print("Dumping Vectorizer to Disk...")
-        helpers.dump(vectorizer, BIN_CUE_VECTORIZER)
+        helpers.dump(vectorizer, BIN_CUE_VECTORIZER_PATH)
     else:
         print("Dumping Classifier to Disk...")
-        helpers.dump(classifier, MULTI_CUE_MODEL)
+        helpers.dump(classifier, MULTI_CUE_MODEL_PATH)
         print("Dumping Vectorizer to Disk...")
-        helpers.dump(vectorizer, MULTI_CUE_VECTORIZER)
+        helpers.dump(vectorizer, MULTI_CUE_VECTORIZER_PATH)
 
     print("Cleaning Up...")
 
-def sentence(data=DATA_FILE, binary=True):
+def sentence(data=DATA_FILE_PATH, binary=True):
     print("Gathering Documents...")
     sentences = Sentences.from_lineslist(_get_sentences(data))
     X, y = sentences.get_data(binary=binary)
@@ -285,14 +258,14 @@ def sentence(data=DATA_FILE, binary=True):
 
     if binary:
         print("Dumping Classifier to Disk...")
-        helpers.dump(classifier, BIN_SENT_MODEL)
+        helpers.dump(classifier, BIN_SENT_MODEL_PATH)
         print("Dumping Vectorizer to Disk...")
-        helpers.dump(vectorizer, BIN_SENT_VECTORIZER)
+        helpers.dump(vectorizer, BIN_SENT_VECTORIZER_PATH)
     else:
         print("Dumping Classifier to Disk...")
-        helpers.dump(classifier, MULTI_SENT_MODEL)
+        helpers.dump(classifier, MULTI_SENT_MODEL_PATH)
         print("Dumping Vectorizer to Disk...")
-        helpers.dump(vectorizer, MULTI_SENT_VECTORIZER)
+        helpers.dump(vectorizer, MULTI_SENT_VECTORIZER_PATH)
 
     print("Cleaning Up...")
 
