@@ -1,5 +1,7 @@
 import collections
 import itertools
+import operator
+import os
 import pickle
 import re
 
@@ -14,6 +16,27 @@ ROMAN_LOWER = re.compile(
 ROMAN_UPPER = re.compile(
         'M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})'
     )
+
+
+def aggregate(predictions):
+    prediction = 'C'
+
+    frequency = collections.Counter(predictions)
+    del frequency['C']
+
+    if frequency:
+        predictions = dict()
+        for (p, f) in frequency.items():
+            if f not in predictions:
+                predictions[f] = list()
+            predictions[f].append(p)
+        predictions = sorted(
+                predictions.items(), key=operator.itemgetter(0), reverse=True
+            )
+        prediction = predictions[0][1][0] \
+            if predictions and len(predictions[0][1]) == 1 else 'U'
+
+    return prediction
 
 
 def dump(obj, filepath):
@@ -65,5 +88,8 @@ def get_charpattern(character):
 
 
 def load(filepath):
+    if not os.path.exists(filepath):
+        raise FileNotFoundError('No such file: {}'.format(filepath))
+
     with open(filepath, 'rb') as file:
         return pickle.load(file)
