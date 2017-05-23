@@ -1,3 +1,5 @@
+[![PyPI](https://img.shields.io/pypi/pyversions/uncertainty.svg?maxAge=2592000)](https://pypi.python.org/pypi/uncertainty/0.1.0) [![PyPI](https://img.shields.io/pypi/v/uncertainty.svg?maxAge=2592000)](https://pypi.python.org/pypi/uncertainty/0.1.0) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE.md)
+
 # LUCI: Linguistic Uncertainty Classifier Interface
 
 Pronounced: &#91;&#x2C8;lusi&#93;
