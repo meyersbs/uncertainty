@@ -245,7 +245,7 @@ class TestClassifierWordMulti(unittest.TestCase):
                 'C',  # because
                 'C',  # it
                 'C',  # was
-                'U',  # considered
+                'D',  # considered
                 'C',  # too
                 'C',  # violent
                 'C',  # at
@@ -290,7 +290,7 @@ class TestClassifierWordMulti(unittest.TestCase):
                 'C',  # because
                 'C',  # it
                 'C',  # was
-                'U',  # considered
+                'D',  # considered
                 'C',  # too
                 'C',  # violent
                 'C',  # at
@@ -395,7 +395,7 @@ class TestClassifierSentenceMulti(unittest.TestCase):
                 ('.', '.', '.', 'O')
             ]
 
-        expected = 'U'
+        expected = 'D'
         actual = self.classifier.predict(data)
 
         self.assertEqual(expected, actual)
@@ -406,7 +406,7 @@ class TestClassifierSentenceMulti(unittest.TestCase):
                'although the violence it depicted is actually mild by ' \
                'today\'s television standards.'
 
-        expected = 'U'
+        expected = 'D'
         actual = self.classifier.predict(data)
         self.assertEqual(expected, actual)
 

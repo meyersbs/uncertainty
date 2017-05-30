@@ -21,9 +21,7 @@ class Classifier(object):
         if not path.exists(filepath):
             raise FileNotFoundError('No such file: {}'.format(filepath))
 
-        lines = None
-        with open(filepath) as file:
-            lines = file.readlines()
+        lines = helpers.read_tsv(filepath)
 
         words = word.Words.from_lines(lines)
         X, y, _ = words.get_data(binary=self.binary)
