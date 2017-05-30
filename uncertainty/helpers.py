@@ -147,3 +147,17 @@ def load(filepath):
     with open(filepath, 'rb') as file:
         return pickle.load(file)
 
+
+def read_tsv(path):
+    lines = list()
+    with open(path, 'r') as file:
+        for line in file:
+            line = line.strip(os.linesep)
+            lines.append(line.split('\t') if line else list())
+    return lines
+
+
+def write_tsv(lines, path):
+    with open(path, 'w') as file:
+        for line in lines:
+            file.write('{}{}'.format('\t'.join(line), os.linesep))
