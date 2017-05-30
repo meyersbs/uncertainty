@@ -2,6 +2,9 @@ import csv
 import re
 
 from . import helpers
+from . import constants
+
+RE_CLASS_PREFIX = re.compile(r'^(B-|I-)')
 
 __all__ = ['Word', 'Words']
 
@@ -11,19 +14,17 @@ class Word(object):
     def from_line(cls, line):
         instance = cls()
 
-        components = next(csv.reader([line], delimiter='\t'))
+        components = line
 
         instance.word = components[1]
         instance.root = components[2]
         instance.pos = components[3]
         instance.chunk = None
-        instance.label = components[4]
-        instance.label = re.sub(r"^(B-|I-)", "", instance.label).upper()
-        instance.multi_label = components[5]
-        instance.binary_label = 'C' if instance.label in ['O', 'C'] else 'U'
+        instance.label = RE_CLASS_PREFIX.sub('', components[4])
+        instance.multi_label = constants.UNCERTAINTY_CLASS_MAP[instance.label]
+        instance.binary_label = 'U' if instance.multi_label != 'C' else 'C'
         instance.features = dict()
-        for feature in components[6:]:
-            feature = re.sub(r"\|\|", "|", feature)
+        for feature in components[5:]:
             index = feature.rindex(':')
             instance.features[feature[:index]] = float(feature[index + 1:])
         instance.context = None
@@ -258,7 +259,7 @@ class Words(object):
 
         instance.words = list()
         for line in lines:
-            if line.strip() == '':
+            if len(line) == 0:
                 continue
             instance.words.append(Word.from_line(line))
 
