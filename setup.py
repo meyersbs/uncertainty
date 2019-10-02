@@ -15,7 +15,7 @@ setup(
             'numpy==1.12.1',
             'scipy==0.19.0',
             'scikit-learn==0.18.1',
-            'nltk==3.2.2'
+            'nltk==3.4.5'
         ],
         license='The MIT License (MIT) Copyright (c) 2017 Benjamin S. Meyers',
         description='Python implementation of a classifier for linguistic '
