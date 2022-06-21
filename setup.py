@@ -12,7 +12,7 @@ setup(
             'uncertainty.lib.nlp': ['verbs.txt']
         },
         install_requires=[
-            'numpy==1.12.1',
+            'numpy==1.22.0',
             'scipy==0.19.0',
             'scikit-learn==0.18.1',
             'nltk==3.2.2'
