@@ -13,7 +13,7 @@ setup(
         },
         install_requires=[
             'numpy==1.22.0',
-            'scipy==0.19.0',
+            'scipy==1.10.0',
             'scikit-learn==0.18.1',
             'nltk==3.4.5'
         ],
