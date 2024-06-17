@@ -14,7 +14,7 @@ setup(
         install_requires=[
             'numpy==1.22.0',
             'scipy==1.10.0',
-            'scikit-learn==0.18.1',
+            'scikit-learn==1.5.0',
             'nltk==3.4.5'
         ],
         license='The MIT License (MIT) Copyright (c) 2017 Benjamin S. Meyers',
